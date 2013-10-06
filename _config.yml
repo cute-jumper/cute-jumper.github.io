@@ -74,7 +74,6 @@ JB :
   tags_path : /tags.html
   atom_path : /atom.xml
   rss_path : /rss.xml
-  about_path: /about.html
 
   # Settings for comments helper
   # Set 'provider' to the comment provider you want to use.
@@ -99,9 +98,12 @@ JB :
   # Set 'provider' to false to turn analytics off globally.
   #        
   analytics :
-    provider : google
-    google : 
+    provider : google_universal
+    google_classic : 
         tracking_id : 'UA-44638412-1'
+    google_universal : 
+        tracking_id : 'UA-44638412-1'
+        domain: 'github.com'
     getclicky :
       site_id : 
     mixpanel :
