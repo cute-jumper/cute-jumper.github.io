@@ -12,7 +12,7 @@ title : cute-jumper.blog
 tagline: Site Tagline
 author :
   name : Junpeng Qiu
-  email : qjpchmail@gmail.com
+  email : echo 'rkqdinbjmzhnbjm.dpn' | tr 'b-z' 'a-x@'
   github : cute-jumper
   twitter : cutejumper
   # feedburner : feedname
@@ -132,4 +132,4 @@ JB :
   # where [HELPER] is the name of the helper you are overriding.
   
 # My own settings
-# site : safe
+safe : true
