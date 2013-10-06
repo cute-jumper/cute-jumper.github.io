@@ -1,0 +1,15 @@
+---
+layout: page
+title: cd /home/cute-jumper/<br/>
+tagline: $ ls -t blogs.happy.programming/ | xargs cat
+---
+<p>
+Hello, welcome to the homepage of cute-jumper.
+</p>
+
+<ul class="posts">
+  {% for post in site.posts %}
+    <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ BASE_PATH }}{{ post.url }}">{{ post.title }}</a></li>
+    </br><em>{{ post.excerpt | textilize}}</em>
+  {% endfor %}
+</ul>
