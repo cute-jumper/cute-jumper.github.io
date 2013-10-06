@@ -100,10 +100,10 @@ JB :
   analytics :
     provider : google_universal
     google_classic : 
-        tracking_id : 'UA-44638412-1'
+        tracking_id : 'UA-44638412-2'
     google_universal : 
         tracking_id : 'UA-44638412-1'
-        domain: 'github.io'
+        domain: 'cute-jumper.github.io'
     getclicky :
       site_id : 
     mixpanel :
