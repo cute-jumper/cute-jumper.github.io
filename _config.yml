@@ -103,7 +103,7 @@ JB :
         tracking_id : 'UA-44638412-1'
     google_universal : 
         tracking_id : 'UA-44638412-1'
-        domain: 'github.com'
+        domain: 'github.io'
     getclicky :
       site_id : 
     mixpanel :
@@ -132,4 +132,4 @@ JB :
   # where [HELPER] is the name of the helper you are overriding.
   
 # My own settings
-site : safe
+# site : safe
