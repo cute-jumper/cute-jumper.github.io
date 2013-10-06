@@ -10,6 +10,6 @@ Hello, welcome to the homepage of cute-jumper.
 <ul class="posts">
   {% for post in site.posts %}
     <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ BASE_PATH }}{{ post.url }}">{{ post.title }}</a></li>
-    </br><em>{{ post.excerpt | textilize}}</em>
+    <em>{{ post.excerpt | textilize}}</em>
   {% endfor %}
 </ul>
