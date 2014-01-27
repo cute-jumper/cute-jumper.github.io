@@ -1,0 +1,853 @@
+---
+layout: post
+title: Install Arch Linux On HP Spectre 13t-3000
+excerpt: Installation and configurations of Arch Linux on an ultrabook with new hardware.
+categories:
+  -  Linux
+tags:
+  -  [Linux, Arch]
+---
+
+<p>
+I decided to install Arch Linux on my new ultrabook. I have been mainly using
+Ubuntu for several years. Since this ultrabook is quite new, I want more control
+on it and I think Arch Linux will be more suitable for this case. I also
+considered Gentoo, which is more customizable than Arch, but at the end I think
+it is not worth wasting so much time on compiling just to gain probably little
+performance improvement. In this post, I will talk about installation and
+configurations of Arch Linux on my new ultrabook, HP Spectre 13t-3000. Many of
+the following steps are from the Arch Wiki, but I think it is still necessary to
+write this post because the wiki tries to cover everything while I just need
+something useful for me. I would write the instructions that I actually use and
+leave out other tedious parts.
+</p>
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Before Installation</h2>
+<div class="outline-text-2" id="text-1">
+</div><div id="outline-container-sec-1-1" class="outline-3">
+<h3 id="sec-1-1"><span class="section-number-3">1.1</span> Check the hardware</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+Since this ultrabook comes with Windows 8 preinstalled, I first boot into the
+Windows 8 and make sure there is no problem with the hardware. It seems that
+under Windows 8, everything works fine. The screen is gorgeous, and Windows 8
+becomes more easy to use when using the touchscreen. The backlit keyboard is
+beautiful, and wireless, audios and everything else all work out of the box.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-2" class="outline-3">
+<h3 id="sec-1-2"><span class="section-number-3">1.2</span> Make UEFI Bootable USB</h3>
+<div class="outline-text-3" id="text-1-2">
+<p>
+Download the Arch Linux ISO from <a href="https://www.archlinux.org/download/">here</a>. I use my Ubuntu system on an other laptop
+to make the UEFI bootalb USB. I have an 8 GB USB as installation medium, and it
+was shown as <code>/dev/sdb/</code> in my Ubuntu system using <code>lsblk</code>. The following
+command will destroy everything in the USB and make a bootable USB:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">dd bs=4M if=/path/to/archlinux.iso of=/dev/sdb &amp;&amp; sync
+</pre>
+</div>
+
+<p>
+And that's all. Very easy.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-1-3" class="outline-3">
+<h3 id="sec-1-3"><span class="section-number-3">1.3</span> Boot the installation medium</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+Insert the USB into the new ultrabook, press "Power" button and then <code>F10</code> to
+enter the UEFI BIOS settings. Here, I changed three things:
+</p>
+<ol class="org-ol">
+<li>Disable <b>Secure Boot</b>. It is really <b>USELESS</b> for a Linux user now and it
+will cause some unnecessary troubles during installation.
+</li>
+<li>Enable <b>Intel VT-x</b>. I would install virtual machines on my laptop and this
+feature is certainly essential.
+</li>
+<li>Boot order. Make USB prior to disk.
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Installation</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Now we will enter the Arch live environment. It is just a shell. Arch
+installation medium uses <code>Zsh</code> as default shell, which will simplify a lot of
+typing during installtion. The default keyboard layout(US), language(English)
+and wired Internet connection(DHCP) all work for me. Although this ultrabook has
+no Ethernet port, I have a USB 3.0 hub with Ethernet port. So I was actually
+using wired Internet now. I didn't need to make any changes for these settings.
+</p>
+</div>
+
+<div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Creat Partitions</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+Using <code>lsblk</code>, I can see that the disk of the ultrabook was shown as
+<code>/dev/sdb/</code>. Through following steps, I will delete all the original partitions
+and only create a <code>/</code> partition for Arch Linux. Since it is a UEFI motherboard,
+I also need to create an extra partition for <b>EFI System Partition(ESP)</b>.
+</p>
+<ol class="org-ol">
+<li><code>gdisk /dev/sdb</code>
+</li>
+<li><code>d</code>. Repeat multiple times to remove all the partition on the disk.
+</li>
+<li><code>N</code>. The first sector is default, the last sector is <code>+1024M</code>, and the <code>Type</code>
+is <code>ef00</code>. This partition is for ESP.
+</li>
+<li><code>N</code>. Make all the rest to be the root <code>/</code> partition.
+</li>
+<li><code>w</code>. Apply all the changes.
+</li>
+</ol>
+
+<p>
+Swap partition is not necessary. After installation, you can use swap file and
+it is more flexible because you can easily resize it.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Create Filesystems</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+I still use <code>ext4</code> as my root filesystem although I do want to try <code>Btrfs</code>.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">mkfs.fat -F32 /dev/sdb1
+mkfs.ext4 /dev/sdb2
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Mount the partitions</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+Next, we need to mount the partition as we are going to install the system on
+the newly created partitions.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">mount /dev/sdb2 /mnt
+</pre>
+</div>
+
+<p>
+Then we make a new directory <code>/mnt/boot</code> and mount the ESP to it:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">mkdir /mnt/boot
+mount /dev/sdb1 /mnt/boot
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-2-4" class="outline-3">
+<h3 id="sec-2-4"><span class="section-number-3">2.4</span> Install Base System</h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+We are now going to actually install Arch.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">pacstrap -i /mnt base base-devel
+</pre>
+</div>
+
+<p>
+When this command ends, a basic Arch Linux is already installed! Let's now do
+some necessary configrations.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-2-5" class="outline-3">
+<h3 id="sec-2-5"><span class="section-number-3">2.5</span> Some Necessary Configurations</h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+First we generate the <code>fstab</code> file:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">genfstab -U -p /mnt &gt;&gt; /mnt/etc/fstab
+</pre>
+</div>
+
+<p>
+You might check the <code>/mnt/ect/fstab</code> file as it is highly recommended by the
+Arch Wiki.
+</p>
+
+<p>
+Next, <code>chroot</code> into the new system:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">arch-chroot /mnt /bin/bash
+</pre>
+</div>
+
+<p>
+Well, now we are going to use <code>bash</code>, which is kind of hard to use as an
+interactive shell compared to <code>Zsh</code>.
+</p>
+
+<p>
+I will also need a Chinese locale. So:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">vi /etc/locale.gen
+</pre>
+</div>
+
+<p>
+Uncomment the line of <code>zh_CN.UTF-8 UTF-8</code>, then use <code>locale-gen</code> to generate new
+locales.
+</p>
+
+<p>
+Next, create a <code>/etc/locale.conf</code> file:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">echo LANG=en_US.UTF-8 &gt; /etc/locale.conf
+</pre>
+</div>
+
+<p>
+And export it:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">export LANG=en_US.UTF-8
+</pre>
+</div>
+
+<p>
+You can change time zone by:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">ln -s /usr/share/zoneinfo/&lt;Zone&gt;/&lt;SubZone&gt; /etc/localtime
+</pre>
+</div>
+
+<p>
+Change the hostname(you can also use the <code>hostnamectl</code> command):
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">echo 'hp-spectre' &gt; /etc/hostname
+</pre>
+</div>
+
+<p>
+For wired Internet connection, I only need dynamic IP now:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">systemctl enable dhcpcd.service
+</pre>
+</div>
+
+<p>
+Set the password for root:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">passwd
+</pre>
+</div>
+
+<p>
+For the moment, I think the above configurations are enough and let's now
+install a bootloader.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-2-6" class="outline-3">
+<h3 id="sec-2-6"><span class="section-number-3">2.6</span> Install a Bootloader</h3>
+<div class="outline-text-3" id="text-2-6">
+<p>
+Instead of <code>grub</code>, <code>gummiboot</code> is recommended for UEFI motherboards. Install <code>gummiboot</code>:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">mount -t efivarfs efivarfs /sys/firmware/efi/efivars
+pacman -S gummiboot
+gummiboot install
+</pre>
+</div>
+
+<p>
+Then we need to manually create an file under <code>/boot/loader/entries/</code>. Let's say
+it's <code>arch.conf</code>. Add following contents to it:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">title   Arch Linux
+linux   /vmlinuz-linux
+initrd  /initramfs-linux.img
+options root=/dev/sda2 rw
+</pre>
+</div>
+
+<p>
+Note here the root should be <code>/dev/sda2</code>, not <code>/dev/sdb2</code> because when you
+normally boot the system without the USB installation medium, the disk of the
+ultrabook should be <code>/dev/sda/</code> although right now it was <code>/dev/sdb/</code>.
+</p>
+
+<p>
+OK. The installation of Arch Linux is finished. Up until now, we only use a few
+very basic shell commands, and it should be quite easy even for someone who only
+has limited knowledge about Linux.
+</p>
+
+<p>
+Let's reboot and go to the tedious configuration part.:(
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">reboot
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Configure the System</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+After rebooting, we can login as root using the password, and the wired Internet
+should work. The USB installation medium is useless now and you can remove it.
+</p>
+</div>
+
+<div id="outline-container-sec-3-1" class="outline-3">
+<h3 id="sec-3-1"><span class="section-number-3">3.1</span> Add a User</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+let's first install <code>sudo</code> and <code>zsh</code>:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">pacman -S sudo zsh
+visudo
+</pre>
+</div>
+
+<p>
+Uncomment the following line:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">%wheel ALL=(ALL) ALL
+</pre>
+</div>
+
+<p>
+Add a user named "qjp", make it a member of group "wheel" and use <code>zsh</code> as the
+login shell:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">useradd -m -g users -G wheel -s /bin/zsh qjp
+passwd qjp
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3-2" class="outline-3">
+<h3 id="sec-3-2"><span class="section-number-3">3.2</span> Change Settings of Pacman</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+I probably will use some x86 applications on my x64 system, so I need to enable
+the <code>multilib</code> repository. Just uncomment the <code>multilib</code> section in
+<code>/etc/pacman.conf</code> and run a force fresh of package list:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">pacman -Syy
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3-3" class="outline-3">
+<h3 id="sec-3-3"><span class="section-number-3">3.3</span> Install GUI</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+First we need to instal X Window System and <code>mesa</code> for 3D support:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">pacman -S xorg-server xorg-server-utils xorg-xinit mesa
+</pre>
+</div>
+
+<p>
+Install Intel's video driver:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">pacman -S xf86-video-intel
+</pre>
+</div>
+
+<p>
+We need the following package in order to make the touchscreen and touchpad work
+properly:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">pacman -S xf86-input-synaptics
+</pre>
+</div>
+
+<p>
+Because of the high DPI screen(13.3-inch QHD screen), I decided to use KDE
+Plasma Desktop. Currently it has the best support for HiDPI screen among all the
+mainstream desktop environments. Since I want to have the entire KDE software
+compilation, based on this <a href="https://wiki.archlinux.org/index.php/KDE_Packages">article</a>, it is better to install KDE by:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">pacman -S kde-meta
+</pre>
+</div>
+
+<p>
+Then enable the KDE Dispaly Manager(KDM):
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">systemctl enable kdm
+</pre>
+</div>
+
+<p>
+In order to display Chinese properly, install following fonts for Chinese:
+</p>
+<ul class="org-ul">
+<li>wqy-bitmapfont
+</li>
+<li>wqy-zenhei
+</li>
+<li>ttf-arphic-ukai
+</li>
+<li>ttf-arphic-uming
+</li>
+<li>ttf-fireflysung
+</li>
+<li>wqy-microhei
+</li>
+<li>wqy-microhei-lite
+</li>
+</ul>
+
+<p>
+Reboot, and in less than 5 seconds(really, really fast!), we should be able to
+see a login window and we can login as 'qjp' and start using the GUI now!
+</p>
+</div>
+</div>
+<div id="outline-container-sec-3-4" class="outline-3">
+<h3 id="sec-3-4"><span class="section-number-3">3.4</span> Wireless connections</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+After entering KDE, I found everything on the screen was still so small. This
+didn't bother me so much right now because I had been working in a small
+terminal up until now and kind of got accustomed to it. KDE can't automatically
+adjust itself according to current DPI. So we still need to manually change its
+settings. But wait a minute, let's first connect to the Internet via wireless
+networks.
+</p>
+
+<p>
+At first, I was attempting to use a graphical network manager. I tried <code>wicd</code>
+but it didn't always work. Actually I only succeeded connecting to the wireless
+networks a few times using <code>wicd</code>. So I finally gave up and turned to Arch's
+default command-line tools.
+</p>
+
+<p>
+First install some essential packages:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">pacman -S iw wpa_supplicant dialog
+</pre>
+</div>
+
+<p>
+Then we use <code>wifi-menu</code> to set up wireless networks:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">wifi-menu
+</pre>
+</div>
+
+<p>
+Select the corresponding interface and wireless network. Enter password if
+necessary. My wireless interface name is <code>wlo1</code>. The above command will result
+in a configuration file under <code>/etc/netctl/</code>. Usually the file name has the form
+of <code>interfacename-networkssid</code>. Enable the wireless network named "mynetwork" of
+interface <code>wlo1</code> using:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">netctl enable wlo1-mynetwork
+</pre>
+</div>
+
+<p>
+At Penn State, the <code>psu</code> wireless uses WPA2-Enterprise for authentication, which
+is not as easy to configure as WPA2-Personal. Combining <a href="https://wiki.archlinux.org/index.php/Netctl#Eduroam">this trick</a> on Arch Wiki
+and the instructions on <a href="http://wireless.psu.edu">http://wireless.psu.edu</a>, this configuration file works
+for me:
+</p>
+<pre class="example">
+Description='Automatically generated profile by wifi-menu'
+Interface=wlo1
+Connection=wireless
+Security=wpa-configsection
+ESSID=psu
+IP=dhcp
+WPAConfigSection=(
+	'ssid="psu"'
+	'key_mgmt=WPA-EAP'
+	'eap=TTLS'
+	'anonymous_identity="your_psu_access_id"'
+	'identity="your_psu_access_id"'
+	'password="your_psu_access_id_password"'
+	'ca_cert="/etc/ssl/certs/AddTrust_External_Root.pem"'
+	'phase2="auth=PAP"'
+)
+</pre>
+
+<p>
+I also installed <code>wpa_actiond</code> and <code>ifplugd</code> for automatic switching of
+profiles. Just enable the services and they will switch between multiple
+profiles automatically:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">systemctl enable netctl-auto@wlo1.service
+systemctl enable netctl-ifplugd@eth0.service
+</pre>
+</div>
+
+<p>
+Currently wireless networks work properly and the background service
+automatically handles everything for me.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-3-5" class="outline-3">
+<h3 id="sec-3-5"><span class="section-number-3">3.5</span> High DPI Settings</h3>
+<div class="outline-text-3" id="text-3-5">
+<p>
+KDE has great support for HiDPI screen, although there are still some <a href="https://community.kde.org/KDE/High-dpi_issues">issues</a>.
+We mainly need to adjust the setting of two parts:
+</p>
+<ol class="org-ol">
+<li>Font and icons
+</li>
+<li>Theme
+</li>
+</ol>
+
+<p>
+Below are my settings:
+</p>
+<ol class="org-ol">
+<li>Go to <i>System Settings-&gt;Application Appearance-&gt;Icons-&gt;Advanced</i>, and change
+the icon size to <code>128</code>.
+</li>
+<li>In the same window, go to <i>Fonts</i>, check <i>Force fonts DPI</i>, and set its value
+to <code>172</code>. Also change the font sizes of toolbar, window title and Taskbar all
+to <code>9</code>.
+</li>
+<li>Edit <code>$HOME/.config/fontconfig/fonts.conf</code>, and change the hintstyle from
+   <code>hintmedium</code> to <code>hintslight</code>.
+</li>
+<li>Go to <i>System Settings-&gt;Workspace Appearance-&gt;Window Decorations-&gt;Configure
+Decoration&#x2026;-&gt;General</i>, and change <i>Button size</i> to "Very Large".
+</li>
+</ol>
+
+<p>
+Now most KDE applications should look pretty good.
+</p>
+
+<p>
+For GTK+ applications, install <code>oxygen-gtk2, oxygen-gtk3</code> and <code>kde-gtk-config</code>
+packages.
+</p>
+
+<p>
+In firefox, go to <i>about:config</i> page, and change the value of
+<code>layout.css.devPixelsPerPx</code>. I set the value to be <code>Font DPI/96=1.8</code>.
+</p>
+
+<p>
+Neither Chromium nor Google Chrome has HiDPI support under Linux right now
+although they do support HiDPI through chrome://flags under Windows.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-3-6" class="outline-3">
+<h3 id="sec-3-6"><span class="section-number-3">3.6</span> Touchpad</h3>
+<div class="outline-text-3" id="text-3-6">
+<p>
+The touchpad works properly. However, due to the silly "control zone" design of
+HP Spectre 13t-3000, the touchpad is extremely <b>wide</b> and that really bothers me
+a lot when I am typing. Add following command to <i>autostart</i> of KDE to disable
+touchpad when typing:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">syndaemon -t -k -i 2 -d &amp;
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3-7" class="outline-3">
+<h3 id="sec-3-7"><span class="section-number-3">3.7</span> Audio</h3>
+<div class="outline-text-3" id="text-3-7">
+<p>
+To my suprise, audio is the hardest part to configure. At first, I could listen
+to local music using headphone. However, I could not make the speaker to work
+using <code>alsamixer</code> command from the <code>alsa-utils</code> package. Also, the flash will
+also crash. Starting firefox from terminal and then playing flash videos on
+youtube, I found the problem was also caused by the audio system. The error
+message was something like:
+</p>
+<pre class="example">
+ALSA lib pcm_dmix.c:1018:(snd_pcm_dmix_open) unable to open slave
+</pre>
+
+<p>
+I googled around, and tried many solutions including adding a <code>$HOME/.asoundrc</code>
+file and changing settings in <code>KMix</code>, but still failed. Finally I tried to
+install <code>pulseaudio</code> and suprisingly, the vlc player now could play local music
+normally. Then I installed <code>pulseaudio-alsa</code> package, which solved the problem
+of flash player.
+</p>
+
+<p>
+Digression: I found the version of flashplayer is older in Arch than that in
+Ubuntu, which is kind of amazing because Arch is said to be always to keep
+up-to-date.
+</p>
+
+<p>
+The solutions are far from perfect. Several problems still exist. For example,
+the <i>Event Sounds</i> will sometimes automatically be reset to the maximum volumn
+without any indication and that really freaks me out. I have to mute it.
+</p>
+
+<p>
+Besides, I also need to disable the "beep" since it was so annoying. Every time
+I type a "tab" in shell and there is no completion, it will make a loud "beep",
+which is so silly. Add the following command to <i>autostart</i> of KDE to disable
+it!
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">xset b off
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3-8" class="outline-3">
+<h3 id="sec-3-8"><span class="section-number-3">3.8</span> Install Chinese Input Method: Fcitx</h3>
+<div class="outline-text-3" id="text-3-8">
+<p>
+Follow <a href="https://wiki.archlinux.org/index.php/Fcitx_%2528%25E7%25AE%2580%25E4%25BD%2593%25E4%25B8%25AD%25E6%2596%2587%2529">this article</a> on Arch Wiki to install and configure fcitx.
+</p>
+
+<p>
+I also installed <code>fcitx-sogoupinyin</code> and <code>fcitx-cloudpinyin</code>. The fcitx skin
+<i>milk</i> looks great under KDE and is highly recommended. After installing the
+skin via fcitx's configuration panel, you need to click <i>Configure Skin</i>, choose
+<i>SkinFont</i> tab and check "Font size repect dpi setting", or it will look too
+small.
+</p>
+
+<p>
+I also disable various shortcuts of fcitx since they will cause collisions
+with Emacs.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-3-9" class="outline-3">
+<h3 id="sec-3-9"><span class="section-number-3">3.9</span> Keyboard &amp; Shortcuts</h3>
+<div class="outline-text-3" id="text-3-9">
+<p>
+The backlit keyboard works out of the box. In <i>System Settings</i>, I make the
+<code>caps lock</code> to be an extra <code>ctrl</code>. This is what I must do in every operating
+system I use because I think the place of <code>caps lock</code> is one of the most stupid
+designs of the keyboard.
+</p>
+
+<p>
+The default shortcuts of KDE are so different from Gnome and Unity that I have
+to memorize these new bindings again.
+</p>
+
+<p>
+These are what I set for my KDE shortcuts(I change some original settings):
+</p>
+<ul class="org-ul">
+<li><code>ctrl+meta+{left,right,up,down}</code> to switch workspaces. I have four workspaces,
+which is the same as Unity.
+</li>
+<li><code>shift+alt+up</code> to maxmize window.
+</li>
+<li><code>shift+alt+down</code> to minimize window.
+</li>
+<li><code>shift+alt+{left,right}</code> to quickly tile window to the left or right.
+</li>
+<li><code>meta+alt+{left,right,up,down}</code> to move current window to a different
+workspace.
+</li>
+<li><code>meta+w</code> to toggle present windows in current desktop
+</li>
+<li><code>meta+ctrl+{-,=}</code> to decrease/increase opacity of active window by 5%.
+</li>
+</ul>
+
+<p>
+Strangely, the "extra ctrl" key <code>caps lock</code> can not be used in shortcuts related
+to desktops, such as <code>ctrl+{F1,F2,F3,F4,F8,F10,F12}</code>, but it can be used when
+combined with other function keys like <code>ctrl+alt+{left,right,up,down}</code>.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-3-10" class="outline-3">
+<h3 id="sec-3-10"><span class="section-number-3">3.10</span> Emacs settings</h3>
+<div class="outline-text-3" id="text-3-10">
+<p>
+Since I am an Emacs user, so readers can skip this part if you are not.
+</p>
+
+<p>
+To support fcitx in Emacs, use following command to launch Emacs:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">LC_CTYPE=zh_CN.UTF8 emacs
+</pre>
+</div>
+
+<p>
+I maintain my own Emacs settings in a private repo on <a href="http://bitbucket.org">Bitbucket</a>, and migration
+to <a href="https://github.com/cute-jumper/qjp-emacs.d">GitHub</a> is in progress. There are several problems when porting my old
+settings to the new one.
+</p>
+<ol class="org-ol">
+<li>I use the latest <code>org</code> package from the <a href="http://orgmode.org/elpa">org mode's elpa</a>. The <code>org mode</code> often
+complains <code>Invalid function: org-with-silent-modifications</code>. I found a
+solution on <a href="http://comments.gmane.org/gmane.emacs.orgmode/70880">this thread</a>: start Emacs with <code>emacs -Q</code>, and then reinstall the
+<code>org</code> package. This perfectly solves the problem.
+</li>
+<li>In order to get rid of the graphcal window when using EasyPG, the following
+setting is not enough:
+<div class="org-src-container">
+
+<pre class="src src-elisp">(setenv "GPG_AGENT_INFO" nil)
+</pre>
+</div>
+<p>
+because Arch uses <code>gnupg2</code> instead of <code>gnupg1</code>. Install <code>gnupg1</code> from AUR,
+then add following code to Emacs' settings:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-elisp">(when (file-executable-p "/usr/bin/gpg1")
+  (setq epg-gpg-program "/usr/bin/gpg1"))
+</pre>
+</div>
+</li>
+<li>In Emacs 24.3, the variable <code>last-command-char</code> no longer exists. Replace
+this variable with <code>last-command-event</code> in every package that uses this
+variable.
+</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-sec-3-11" class="outline-3">
+<h3 id="sec-3-11"><span class="section-number-3">3.11</span> Miscellaneous Settings</h3>
+<div class="outline-text-3" id="text-3-11">
+<ul class="org-ul">
+<li>Ubuntu One. I have been using Ubuntu One for a long time on my old laptop. We
+need to install Ubuntu One from AUR. After installing it, every time I log
+into KDE, it will ask for a password for <i>gnome-keyring</i>, which is very
+annoying. So I install <code>seahorse</code> and change the password to be empty. This is
+not a <b>safe</b> way. However, it solved the problem.
+</li>
+<li>VirtualBox. The kernel module <code>vboxdrv</code> is not automatically enabled so we
+need to use <code>modprobe</code> to enable it. The more convenient way is to set up a
+file named <code>virtualbox.conf</code> under <code>/etc/modules-load.d/</code> and just put the
+line <code>vboxdrv</code> in it.
+</li>
+<li>Firefox KDE Integration. Install <a href="http://oxygenkde.altervista.org/index.html">Oxygen KDE</a> theme for firefox to make it looks
+better under KDE.
+</li>
+<li>Fonts. The google web fonts from AUR is highly recommended.
+</li>
+<li>Python 3 is set as default in Arch. I currently still work in Python 2.x, so
+if installing packages via <code>pip</code>, <code>python2-pip</code> is needed.
+</li>
+<li>By default, KDE will not automatically mount removable devices. You can change
+this behavior in <i>System Settings-&gt;Removable Devices</i>.
+</li>
+<li>Sanguosha is a popular board game in China, and there is a QT-Based sanguosha
+application named "qsanguosha". You can install it from AUR if interested.:)
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Conclusion</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Finally, we come into the "Conclusion" part. I think I left out a lot of other
+useful settings because I just can't remember them when writing this post!
+</p>
+
+<p>
+In conclusion, there are no big problems installing (Arch) Linux in this
+ultrabook, and nearly everything is great! The booting speed is fantastic(less
+than 5 seconds) and the KDE Plasma Desktop looks really beautiful in the QHD
+screen.
+</p>
+
+<p>
+One other important thing I forgot to mention: with screen brightness set to
+10%, this ultrabook can work more than 5 hours in KDE. This figure is not quite
+good as it is a <b>Haswell</b> based ultrabook. It is said that this ultrabook can at
+most have 9 hours under Windows 8. The battery life seemed even worse when
+compared to the Macbook Air. Although it fails to meet my original expectations,
+given the fact that it runs Linux, I think it is still acceptable.
+</p>
+</div>
+</div>
