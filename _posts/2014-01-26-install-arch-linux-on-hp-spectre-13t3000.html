@@ -554,6 +554,9 @@ systemctl enable netctl-ifplugd@eth0.service
 </div>
 
 <p>
+However, if I choose <code>netctl-auto</code> to automatically manage the profiles, I need
+to run <code>netctl disable wlo1-mynetwork</code> to disable the profiles that I have
+enabled using <code>netctl</code>, otherwise these profiles will start twice at boot.
 Currently wireless networks work properly and the background service
 automatically handles everything for me.
 </p>
@@ -603,7 +606,8 @@ packages.
 
 <p>
 In firefox, go to <i>about:config</i> page, and change the value of
-<code>layout.css.devPixelsPerPx</code>. I set the value to be <code>Font DPI/96=1.8</code>.
+<code>layout.css.devPixelsPerPx</code>. I set the value to be 1.7, which is slightly
+smaller than: <code>(Current Font DPI)/96=172/96=1.8</code>.
 </p>
 
 <p>
@@ -797,11 +801,14 @@ variable.
 <h3 id="sec-3-11"><span class="section-number-3">3.11</span> Miscellaneous Settings</h3>
 <div class="outline-text-3" id="text-3-11">
 <ul class="org-ul">
-<li>Ubuntu One. I have been using Ubuntu One for a long time on my old laptop. We
-need to install Ubuntu One from AUR. After installing it, every time I log
-into KDE, it will ask for a password for <i>gnome-keyring</i>, which is very
-annoying. So I install <code>seahorse</code> and change the password to be empty. This is
-not a <b>safe</b> way. However, it solved the problem.
+<li><del>Ubuntu One. I have been using Ubuntu One for a long time on my old laptop. We need to install Ubuntu One from AUR. After installing it, every time I log into KDE, it will ask for a password for <i>gnome-keyring</i>, which is very annoying. So I install <code>seahorse</code> and change the password to be empty. This is not a <b>safe</b> way. However, it solved the problem.</del>
+</li>
+<li>SpiderOak. Ubuntu One worked for a while, but it randomly stopped working and
+I have no idea why it failed. So I picked <a href="https://spideroak.com/">SpiderOak</a> as its replacement. The
+reason why I need such a file synchronization program besides Dropbox: Both
+Ubuntu One and SpiderOak could choose to synchronize a folder at where it is,
+that is, I don't need to put everything into one "central" folder like Dropbox
+does.
 </li>
 <li>VirtualBox. The kernel module <code>vboxdrv</code> is not automatically enabled so we
 need to use <code>modprobe</code> to enable it. The more convenient way is to set up a
@@ -817,6 +824,17 @@ types.
 </li>
 <li>Python 3 is set as default in Arch. I currently still work in Python 2.x, so
 if installing packages via <code>pip</code>, <code>python2-pip</code> is needed.
+</li>
+<li>Ruby. RubyGems seems to be installed under personal directory instead of
+system directories by default. So it is necessary to modify the <code>PATH</code>
+environment variable:
+<div class="org-src-container">
+
+<pre class="src src-sh">PATH=$PATH:$(ruby -e 'puts Gem.user_dir')/bin
+</pre>
+</div>
+</li>
+<li>Scala. Scala-ide is available from AUR.
 </li>
 <li>By default, KDE will not automatically mount removable devices. You can change
 this behavior in <i>System Settings-&gt;Removable Devices</i>.
