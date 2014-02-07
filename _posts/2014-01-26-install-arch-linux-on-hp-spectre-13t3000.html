@@ -836,6 +836,16 @@ environment variable:
 </li>
 <li>Scala. Scala-ide is available from AUR.
 </li>
+<li>TeXLive documentation. If you install TeXLive from Arch's official repository,
+no documentation will be installed because the <code>texive-*-doc</code> packages were
+removed from Arch's repo on purpose according to <a href="https://bbs.archlinux.org/viewtopic.php?id%3D174491">this thread</a>. Running <code>texdoc
+  packagename</code> will return no result. Although this might be understandable
+since most of the documentation were just pdf files and may take up too much
+disk space, I still felt kind of disappointed. My current solution is to
+install <a href="https://aur.archlinux.org/packages/texlive-localmanager-git/">texlive-localmanager-git</a> from AUR which is mentioned in <a href="https://wiki.archlinux.org/index.php/TeXLive#TeXLive_Local_Manager">this wiki
+page</a>. Then use <code>tllocalmgr installdoc</code> to install the documentation that I
+want.
+</li>
 <li>By default, KDE will not automatically mount removable devices. You can change
 this behavior in <i>System Settings-&gt;Removable Devices</i>.
 </li>
