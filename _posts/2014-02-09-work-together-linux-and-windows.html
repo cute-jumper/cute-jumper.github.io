@@ -153,7 +153,7 @@ instant updating of the pdf files.
 Currently the best solution I could think of is to synchronize the generated pdf
 file between Linux and Windows. Then Sumatra will open the pdf file locally, and
 every time I regenerate the pdf file in Linux, the file should be copied to
-Windows instantly. The file synchronizatin tools such as Dropbox are not fast
+Windows instantly. The file synchronization tools such as Dropbox are not fast
 enough to achieve this, so writing a simple shell script would be better. There
 is a package named <code>inotify-tools</code> in Arch's official repository, which contains
 a tool that could monitor the state changes of a particular file or directory.
@@ -194,13 +194,13 @@ The above solution seems quite good, except that I don't really need to view the
 Windows desktop in the VNC client since I have the large-size monitor already.
 It is a waste to transfer the data and consume the CPU computation power.
 Luckily, I found <a href="http://superuser.com/questions/281262/remote-control-linux-keyboard-mouse">this thread</a> on superuser, which said that <a href="http://synergy-foss.org/">Synergy</a> was good to
-solve this. Actually, it is. I could easily install it from Arch's official
+solve this. Actually, it is. We could easily install it from Arch's official
 repository. Follow the instructions on <a href="https://wiki.archlinux.org/index.php/synergy">this page</a> to set up the server on Arch
 Linux. You could use the example configuration file,
-<code>/etc/synergy.conf.example</code>, or the GUI tool to generate the sample
-configuration file. I manually edited the <i>aliases</i> section to associate the
-hostnames with their corresponding IP addresses so that it is unnecessary to
-change the <code>hosts</code> file of the operating system.
+<code>/etc/synergy.conf.example</code>, or the GUI tool to generate the configuration file.
+I manually edited the <i>aliases</i> section to associate the hostnames with their
+corresponding IP addresses so that it is unnecessary to change the <code>hosts</code> file
+of the operating system.
 </p>
 
 <p>
