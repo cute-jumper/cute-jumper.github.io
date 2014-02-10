@@ -1,0 +1,240 @@
+---
+layout: post
+title: "Work together: Linux and Windows"
+excerpt: How to work with muliple laptops of Linux and Windows at the same time
+categories:
+  -  Linux, Windows
+tags:
+  -  Linux, Windows, Software, Samba, inotifywait, Synergy, Arch Linux, Ubuntu
+---
+
+<div id="outline-container-sec-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> Introduction</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Currently I have <b>three</b> laptops. They have Arch Linux, Windows 8.1 and Ubuntu
+Linux 13.10 installed respectively. The laptop with the Ubuntu is four years old
+and not quite usable because it has heat dissipation problem and would easily
+shutdown when running some CPU-consuming programs. But still, it could be used
+as a file server and run some light-weight workload.
+</p>
+
+<p>
+Besides the laptops, I have a 27-inch 1080p IPS LED monitor. When working, I
+would use Arch Linux on my HP ultrabook and the 13-inch QHD screen is gorgeous.
+However, since I have done some HiDPI-related settings on KDE(my desktop
+environment on Arch Linux) as described in <a href="{% post_url 2014-01-26-install-arch-linux-on-hp-spectre-13t3000 %}">this post</a>, it would become very ugly
+if I connect the ultrabook to the 27-inch monitor, whose DPI is only 81.59.
+Therefore I prefer connecting the Windows 8.1 machine to the monitor. The
+problem here is how to make these machines cooperate with each other.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> Share files over Local Network</h2>
+<div class="outline-text-2" id="text-2">
+</div><div id="outline-container-sec-2-1" class="outline-3">
+<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Server</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+The first thing I want to set up is to access files on another machine over the
+local network. I use a fairly simple <a href="http://www.samba.org/">Samba</a> setup. The following steps are based
+on <a href="https://wiki.archlinux.org/index.php/samba">this Arch Wiki page</a>.
+</p>
+
+<p>
+First install <code>samba</code> and <code>smbclient</code>. Copy the example configuration file
+<code>/etc/samba/smb.conf.default/</code> to <code>/etc/samba/smb.conf</code>. I only changed the line
+below:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">name resolve order = lmhosts bcast host wins
+</pre>
+</div>
+<p>
+because of the "Time Out" problem of Dolphin mentioned in <a href="https://wiki.archlinux.org/index.php/samba#KDE">this section</a>. But the
+Dolphin's built-in Samba support is still very unusable. It is very slow and
+often can not even show the Samba server list completely. I use the command line
+tool <code>smbclient</code> instead.
+</p>
+
+<p>
+In Arch's example configuration file, it enable user's home directory sharing by
+default. The situation of Ubuntu is a little different. You need to manually
+uncomment the <code>[homes]</code> part in <i>Share Definitions</i>. Now start the Samba server
+using <code>systemctl start smbd nmbd</code> and make them enable by default using
+<code>systemctl enable smbd nmbd</code>.
+</p>
+
+<p>
+Next we need to grant users' access to the Samba drives. Using
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">smbpasswd -a qjp
+</pre>
+</div>
+<p>
+will add the user <code>qjp</code> to the local smbpasswd file, and we can log into Samba
+drives as user <code>qjp</code> now. The server settings are all done.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-2" class="outline-3">
+<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Client</h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+Essentially there are no apparent settings required in client side. To see some
+useful information of a Samba server:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">smbclient -L hostname -U username
+</pre>
+</div>
+
+<p>
+Now we manually mount the remote drive to a local mountpoint, using one of the
+sharenames you see in the output of previous command:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">sudo mount -t cifs //hostname/sharename /path/to/mountpoint -o
+user=username,password=password,workgroup=WORKGROUP,uid=localusername,gid=localgroupname,ip=serverip
+</pre>
+</div>
+
+<p>
+Since this command is executed using <code>sudo</code>, the <code>uid</code> and <code>gid</code> options are
+necessary as I want write-permission to the mountpoint as a regular user <code>qjp</code>,
+not <code>root</code>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-sec-2-3" class="outline-3">
+<h3 id="sec-2-3"><span class="section-number-3">2.3</span> A Use Case</h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+Now let us see a use case of how to work effectively by using Linux and Windows
+together.
+</p>
+
+<p>
+I use \LaTeX{} to generate pdf files in Linux, and with a plugin named
+<code>latex-preview-pane</code> of Emacs, the pdf file will be automatically regenerated
+every time I save the modified \LaTeX{} source file. In order to make use of the
+large screen of the 27-inch monitor, I want to write \LaTeX{} source file in my
+ultrabook while viewing the generated pdf file in the Windows machine, which is
+connected to the 27-inch monitor.
+</p>
+
+<p>
+While <code>Evince</code> and <code>Okular</code> all support auto-reloading of pdf files when they
+are changed in Linux, I only find that <a href="http://blog.kowalczyk.info/software/sumatrapdf/download-free-pdf-viewer.html">Sumatra PDF</a> has the similar functionality
+in Windows(It is also said the <code>Evince</code>'s Windows version has the auto-reloading
+feature but it doesn't work properly when I tested it). The problem here is when
+using Sumatra to view the pdf file in the drive of my Linux machine via Samba,
+Sumatra will not automatically reload the pdf file when I regenerate it. It is
+<b>not</b> wierd because in the OS level, the <i>file change notification</i> isn't sent
+to the Sumatra in time, that is, Sumatra doesn't know that this pdf file has
+already been regenerated so it won't reload it. It is Samba's fault. From
+Samba's documentation <a href="http://www.samba.org/samba/docs/using_samba/ch11.html">here</a>, there is actually a global option in the Samba
+server, named <code>change notify timeout</code>, which defaults to 60 seconds. Making this
+number smaller seems to solve this problem. However, the documentation said
+"Performing these checks too often can slow down the server considerably", so it
+is not feasible to make it small enough in order to achieve the effect of
+instant updating of the pdf files.
+</p>
+
+<p>
+Currently the best solution I could think of is to synchronize the generated pdf
+file between Linux and Windows. Then Sumatra will open the pdf file locally, and
+every time I regenerate the pdf file in Linux, the file should be copied to
+Windows instantly. The file synchronizatin tools such as Dropbox are not fast
+enough to achieve this, so writing a simple shell script would be better. There
+is a package named <code>inotify-tools</code> in Arch's official repository, which contains
+a tool that could monitor the state changes of a particular file or directory.
+You could find some examples <a href="https://github.com/rvoicilas/inotify-tools/wiki">here</a>. The script I use for this case is really
+simple:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh">inotifywait -m -e close_write example.pdf | while read foo; do cp example.pdf
+/path/to/mountpoint/Documents/example.pdf; done
+</pre>
+</div>
+
+<p>
+<code>inotifywait</code> will monitor the <code>close_write</code> events of <code>example.pdf</code>. Once it is
+regenerated, copy the new file to Windows via Samba. Then Sumatra will reload
+the new pdf file. This process is very fast.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-sec-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> Share keyboard and Mouse Between Laptops</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+In order to switch between different laptops seamlessly, I need to control the
+Windows on the other laptop using the keyboard and mouse of my Linux ultrabook.
+The first solution I thought of was to install a third-party VNC server on
+Windows(I have to do so because there is no built-in support in Windows 8.1,
+which is neither a pro nor enterprise version, to act as a remote desktop
+server) and use a VNC client to connect to the server so that I could use my
+keyboard and mouse of my Linux ultrabook to control the Windows. I could put the
+VNC client in a separate activity of KDE to make the switch more comfortable.
+</p>
+
+<p>
+The above solution seems quite good, except that I don't really need to view the
+Windows desktop in the VNC client since I have the large-size monitor already.
+It is a waste to transfer the data and consume the CPU computation power.
+Luckily, I found <a href="http://superuser.com/questions/281262/remote-control-linux-keyboard-mouse">this thread</a> on superuser, which said that <a href="http://synergy-foss.org/">Synergy</a> was good to
+solve this. Actually, it is. I could easily install it from Arch's official
+repository. Follow the instructions on <a href="https://wiki.archlinux.org/index.php/synergy">this page</a> to set up the server on Arch
+Linux. You could use the example configuration file,
+<code>/etc/synergy.conf.example</code>, or the GUI tool to generate the sample
+configuration file. I manually edited the <i>aliases</i> section to associate the
+hostnames with their corresponding IP addresses so that it is unnecessary to
+change the <code>hosts</code> file of the operating system.
+</p>
+
+<p>
+I would make the Windows machine act as the client. However, at the time of
+writing, the lastest version, 1.4.15 Beta, still doesn't fix the bug of
+<i>alt+tab</i> mentioned in <a href="http://synergy-foss.org/spit/issues/details/3338/">this issue</a>. But someone else in that issue thread has
+already fixed that and applied his/her patch to version 1.4.14, which would make
+the <i>alt+tab</i> behave normally in Windows 8. You could find the download
+addresses for the patched versions in that issue. I'm suprised that the author
+doesn't apply that patch, which was quite simple and came out earlier than the
+new version was released.
+</p>
+
+<p>
+After using Synergy for a while, I would say it is really a great piece of
+software. It is very fast. The Windows machine behaves like the extended desktop
+for my Linux. I could simply move the cursor to switch between them, which is
+really awesome.
+</p>
+</div>
+</div>
+<div id="outline-container-sec-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> Conclusion</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+OK. These are all my settings to make use of multiple laptops together. I could
+now take advantage of both Linux and Windows to finish different kinds of tasks.
+Most of my working is done under Linux, and Windows is mainly used for
+entertainment and viewing Microsoft Office documents. I also have the high DPI
+screen as well as the large Full HD screen to work at the same time, which makes
+working at home really an enjoyment. Every available device now works very well,
+except for the old and poor Ubuntu laptop. It could only serve as a internal
+file server and SSH server. Up until now, I couldn't think of anything
+interesting to make use of it:(.
+</p>
+</div>
+</div>
