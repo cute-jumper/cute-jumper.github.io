@@ -27,7 +27,7 @@ system provided by org-mode to manage the pages of the website.
 <p>
 Here I assume you have already had some basic knowledge of org-mode, Git and
 <a href="//jekyllrb.com/">Jekyll</a>, and already installed Git and Jekyll on your system. This post is
-based on these two articles: <a href="http://orgmode.org/worg/org-tutorials/org-jekyll.html">Using org to Blog with Jekyll</a> and <a href="http://orgmode.org/worg/org-tutorials/org-jekyll.html">Blogging with
+based on these two articles: <a href="http://orgmode.org/worg/org-tutorials/org-jekyll.html">Using org to Blog with Jekyll</a> and <a href="http://www.gorgnegre.com/linux/using-emacs-orgmode-to-blog-with-jekyll.html">Blogging with
 Emacs org-mode and Github Pages</a>.
 </p>
 </div>
@@ -42,18 +42,18 @@ value of <code>org-publish-project-alist</code> variable.
 <div class="org-src-container">
 
 <pre class="src src-elisp">(setq org-publish-project-alist
-      '((<span style="color: #8b2252;">"jekyll-cute-jumper-github-io"</span> <span style="color: #b22222;">;; </span><span style="color: #b22222;">settings for cute-jumper.github.io</span>
-         <span style="color: #483d8b;">:base-directory</span> <span style="color: #8b2252;">"~/Documents/org-publish/cute-jumper.github.io/org"</span>
-         <span style="color: #483d8b;">:base-extension</span> <span style="color: #8b2252;">"org"</span>
-         <span style="color: #483d8b;">:publishing-directory</span> <span style="color: #8b2252;">"~/Documents/org-publish/cute-jumper.github.io/deploy"</span>
-         <span style="color: #483d8b;">:recursive</span> t
-         <span style="color: #483d8b;">:publishing-function</span> org-html-publish-to-html
-         <span style="color: #483d8b;">:with-toc</span> nil
-         <span style="color: #483d8b;">:headline-levels</span> 4
-         <span style="color: #483d8b;">:auto-preamble</span> nil
-         <span style="color: #483d8b;">:auto-sitemap</span> nil
-         <span style="color: #483d8b;">:html-extension</span> <span style="color: #8b2252;">"html"</span>
-         <span style="color: #483d8b;">:body-only</span> t)))
+      '(("jekyll-cute-jumper-github-io" ;; settings for cute-jumper.github.io
+         :base-directory "~/Documents/org-publish/cute-jumper.github.io/org"
+         :base-extension "org"
+         :publishing-directory "~/Documents/org-publish/cute-jumper.github.io/deploy"
+         :recursive t
+         :publishing-function org-html-publish-to-html
+         :with-toc nil
+         :headline-levels 4
+         :auto-preamble nil
+         :auto-sitemap nil
+         :html-extension "html"
+         :body-only t)))
 </pre>
 </div>
 
@@ -72,11 +72,11 @@ For convenience, I start my configuration from <a href="https://github.com/plusj
 </p>
 <div class="org-src-container">
 
-<pre class="src src-sh"><span style="color: #483d8b;">cd</span> ~/Documents/org-publish/cute-jumper.github.io/
-<span style="color: #b22222;"># </span><span style="color: #b22222;">Clone into publishing directory</span>
+<pre class="src src-sh">cd ~/Documents/org-publish/cute-jumper.github.io/
+# Clone into publishing directory
 git clone https://github.com/plusjade/jekyll-bootstrap.git deploy
-<span style="color: #483d8b;">cd</span> deploy
-<span style="color: #b22222;"># </span><span style="color: #b22222;">Setup upstream to your remote repo in GitHub</span>
+cd deploy
+# Setup upstream to your remote repo in GitHub
 git remote set-url origin git@github.com: cute-jumper/cute-jumper.github.io.git
 </pre>
 </div>
@@ -159,58 +159,58 @@ Org-mode and Jekyll</a>, can simplify our work. I made some slight
 modifications to the original code to fit my own needs.
 <div class="org-src-container">
 
-<pre class="src src-elisp">(<span style="color: #a020f0;">defvar</span> <span style="color: #a0522d;">jekyll-directory</span> (expand-file-name <span style="color: #8b2252;">"~/Documents/org-publish/cute-jumper.github.io/org/"</span>)
-  <span style="color: #8b2252;">"Path to Jekyll blog."</span>)
-(<span style="color: #a020f0;">defvar</span> <span style="color: #a0522d;">jekyll-drafts-dir</span> <span style="color: #8b2252;">"_drafts/"</span>
-  <span style="color: #8b2252;">"Relative path to drafts directory."</span>)
-(<span style="color: #a020f0;">defvar</span> <span style="color: #a0522d;">jekyll-posts-dir</span> <span style="color: #8b2252;">"_posts/"</span>
-  <span style="color: #8b2252;">"Relative path to posts directory."</span>)
-(<span style="color: #a020f0;">defvar</span> <span style="color: #a0522d;">jekyll-post-ext</span> <span style="color: #8b2252;">".org"</span>
-  <span style="color: #8b2252;">"File extension of Jekyll posts."</span>)
-(<span style="color: #a020f0;">defvar</span> <span style="color: #a0522d;">jekyll-post-template</span>
-  <span style="color: #8b2252;">"BEGIN_HTML\n---\nlayout: post\ntitle: %s\nexcerpt: \ncategories:\n  -  \ntags:\n  -  \n---\n#+END_HTML\n\n* "</span>
-  <span style="color: #8b2252;">"Default template for Jekyll posts. %s will be replace by the post title."</span>)
+<pre class="src src-elisp">(defvar jekyll-directory (expand-file-name "~/Documents/org-publish/cute-jumper.github.io/org/")
+  "Path to Jekyll blog.")
+(defvar jekyll-drafts-dir "_drafts/"
+  "Relative path to drafts directory.")
+(defvar jekyll-posts-dir "_posts/"
+  "Relative path to posts directory.")
+(defvar jekyll-post-ext ".org"
+  "File extension of Jekyll posts.")
+(defvar jekyll-post-template
+  "BEGIN_HTML\n---\nlayout: post\ntitle: %s\nexcerpt: \ncategories:\n  -  \ntags:\n  -  \n---\n#+END_HTML\n\n* "
+  "Default template for Jekyll posts. %s will be replace by the post title.")
 
-(<span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">jekyll-make-slug</span> (s)
-  <span style="color: #8b2252;">"Turn a string into a slug."</span>
+(defun jekyll-make-slug (s)
+  "Turn a string into a slug."
   (replace-regexp-in-string
-   <span style="color: #8b2252;">" "</span> <span style="color: #8b2252;">"-"</span> (downcase
+   " " "-" (downcase
             (replace-regexp-in-string
-             <span style="color: #8b2252;">"[</span><span style="color: #8b2252;">^</span><span style="color: #8b2252;">A-Za-z0-9 ]"</span> <span style="color: #8b2252;">""</span> s))))
+             "[^A-Za-z0-9 ]" "" s))))
 
-(<span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">jekyll-yaml-escape</span> (s)
-  <span style="color: #8b2252;">"Escape a string for YAML."</span>
-  (<span style="color: #a020f0;">if</span> (or (string-match <span style="color: #8b2252;">":"</span> s)
-          (string-match <span style="color: #8b2252;">"\""</span> s))
-      (concat <span style="color: #8b2252;">"\""</span> (replace-regexp-in-string <span style="color: #8b2252;">"\""</span> <span style="color: #8b2252;">"\\\\\""</span> s) <span style="color: #8b2252;">"\""</span>)
+(defun jekyll-yaml-escape (s)
+  "Escape a string for YAML."
+  (if (or (string-match ":" s)
+          (string-match "\"" s))
+      (concat "\"" (replace-regexp-in-string "\"" "\\\\\"" s) "\"")
     s))
 
-(<span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">jekyll-draft-post</span> (title)
-  <span style="color: #8b2252;">"Create a new Jekyll blog post."</span>
-  (interactive <span style="color: #8b2252;">"sPost Title: "</span>)
-  (<span style="color: #a020f0;">let</span> ((draft-file (concat jekyll-directory jekyll-drafts-dir
+(defun jekyll-draft-post (title)
+  "Create a new Jekyll blog post."
+  (interactive "sPost Title: ")
+  (let ((draft-file (concat jekyll-directory jekyll-drafts-dir
                             (jekyll-make-slug title)
                             jekyll-post-ext)))
-    (<span style="color: #a020f0;">if</span> (file-exists-p draft-file)
+    (if (file-exists-p draft-file)
         (find-file draft-file)
       (find-file draft-file)
       (insert (format jekyll-post-template (jekyll-yaml-escape title))))))
 
-(<span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">jekyll-publish-post</span> ()
-  <span style="color: #8b2252;">"Move a draft post to the posts directory, and rename it so that it</span>
-<span style="color: #8b2252;"> contains the date."</span>
+(defun jekyll-publish-post ()
+  "Move a draft post to the posts directory, and rename it so that it
+ contains the date."
   (interactive)
-  (<span style="color: #a020f0;">cond</span>
+  (cond
    ((not (equal
           (file-name-directory (buffer-file-name (current-buffer)))
           (concat jekyll-directory jekyll-drafts-dir)))
-    (message <span style="color: #8b2252;">"This is not a draft post."</span>))
+    (message "This is not a draft post."))
    ((buffer-modified-p)
-    (message <span style="color: #8b2252;">"Can't publish post; buffer has modifications."</span>))
+    (message "Can't publish post; buffer has modifications."))
    (t
-    (<span style="color: #a020f0;">let</span> ((filename
+    (let ((filename
            (concat jekyll-directory jekyll-posts-dir
-                   (format-time-string <span style="color: #8b2252;">"%Y-%m-%d-"</span>)
+                   (format-time-string "%Y-%m-%d-")
                    (file-name-nondirectory
                     (buffer-file-name (current-buffer)))))
           (old-point (point)))
@@ -233,15 +233,15 @@ of org-mode, there is an elegant way to solve this. I stole from <a href="http:/
 thread</a> in stackoverflow.
 <div class="org-src-container">
 
-<pre class="src src-elisp">(<span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">org-jekyll-post-link-follow</span> (path)
+<pre class="src src-elisp">(defun org-jekyll-post-link-follow (path)
   (org-open-file-with-emacs path))
 
-(<span style="color: #a020f0;">defun</span> <span style="color: #0000ff;">org-jekyll-post-link-export</span> (path desc format)
-  (<span style="color: #a020f0;">cond</span>
+(defun org-jekyll-post-link-export (path desc format)
+  (cond
    ((eq format 'html)
-    (format <span style="color: #8b2252;">"&lt;a href=\"{% raw %}{%% post_url %s %%}{% endraw %}\"&gt;%s&lt;/a&gt;"</span> path desc))))
+    (format "&lt;a href=\"{% raw %}{%% post_url %s %%}{% endraw %}\"&gt;%s&lt;/a&gt;" path desc))))
 
-(org-add-link-type <span style="color: #8b2252;">"jekyll-post"</span> 'org-jekyll-post-link-follow 'org-jekyll-post-link-export)
+(org-add-link-type "jekyll-post" 'org-jekyll-post-link-follow 'org-jekyll-post-link-export)
 </pre>
 </div>
 
@@ -319,7 +319,7 @@ done all the settings above.
 </p>
 <ol class="org-ol">
 <li>Invoke <code>jekyll-draft-post</code> to write a draft. (You may want to add
-     <code>deploy/_drafts</code> directory into your .gitignore file&#x2026;That's what I did.)
+<code>deploy/_drafts</code> directory into your .gitignore file&#x2026;That's what I did.)
 </li>
 <li>When writing is done, invoke <code>jekyll-publish-post</code>, which will prepend a
 timestamp in front of the original file name and move the file from
