@@ -1,0 +1,135 @@
+---
+layout: post
+title: Let Helm Support ZSH-like Path Expansion
+excerpt: Add ZSH-like Path Expansion to Helm! Cheers!
+categories:
+  - emacs
+tags:
+  - [emacs, helm, zsh]
+---
+
+<div id="outline-container-orgheadline1" class="outline-2">
+<h2 id="orgheadline1"><span class="section-number-2">1</span> What is it and Why</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+<a href="https://github.com/emacs-helm/helm">Helm</a> is awesome. I can open files very quickly in Emacs using helm. But I
+still miss one feature from ZShell: the path expansion. For example, if I want
+visit some very deeply nested directory, say,
+<code>/home/qjp/foo/bar/what/the/hell</code>, I type following command:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh"><span style="color: #9fbfdf;">cd</span> /h/q/f/b/w/t/h
+</pre>
+</div>
+
+<p>
+Then I hit <code>TAB</code>, zsh will list all the possible expansions and I can select
+one from them. Sounds familiar? Yes, if you use helm, helm will list all the
+possible completions for you and you can select one of them. However, the
+problem is that helm <b>DOES NOT</b> support zsh-like path expansion, and the
+author won't add this feature to helm(See <a href="https://github.com/emacs-helm/helm/issues/1266">here</a>).
+</p>
+
+<p>
+So in the previous example, using helm, you have to type some letters, select
+the candidate and expand to the selection. Since there are multiple levels of
+directories, you have to do this multiple times until you finnaly get to where
+you want. This is so inefficient and way too teeeeeedious! I don't know why I
+have to do such stupid things if I've already known the structures of the
+directories very well(this is my computer anyway) and I know exactly where I
+wanna go(Yeah, the current behavior of helm is useful when you are not sure
+where you want to go or the path is not that deeply nested).
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline2" class="outline-2">
+<h2 id="orgheadline2"><span class="section-number-2">2</span> Elisp to the rescue</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+However, it is <i>Emacs</i>, we can customize it! I don't know much about the
+implementation of helm, but after about one hour's hack, I figured out a
+working patch for helm. This is what I add to my Emacs config file:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-elisp">(<span style="color: #91a0b3;">with-eval-after-load</span> 'helm-files
+  <span style="color: #706565;">;; </span><span style="color: #857575;">Let helm support zsh-like path expansion.</span>
+  (<span style="color: #91a0b3;">defvar</span> <span style="color: #aaca86;">helm-ff-expand-valid-only-p</span> t)
+  (<span style="color: #91a0b3;">defvar</span> <span style="color: #aaca86;">helm-ff-sort-expansions-p</span> t)
+  (<span style="color: #91a0b3;">defun</span> <span style="color: #a9df90;">helm-ff-try-expand-fname</span> (candidate)
+    (<span style="color: #91a0b3;">let</span> ((dirparts (split-string candidate <span style="color: #ddbc91;">"/"</span>))
+          valid-dir
+          fnames)
+      (<span style="color: #91a0b3;">catch</span> '<span style="color: #ab85a3;">break</span>
+        (<span style="color: #91a0b3;">while</span> dirparts
+          (<span style="color: #91a0b3;">if</span> (file-directory-p (concat valid-dir (car dirparts) <span style="color: #ddbc91;">"/"</span>))
+              (setq valid-dir (concat valid-dir (pop dirparts) <span style="color: #ddbc91;">"/"</span>))
+            (<span style="color: #91a0b3;">throw</span> '<span style="color: #ab85a3;">break</span> t))))
+      (setq fnames (cons candidate (helm-ff-try-expand-fname-1 valid-dir dirparts)))
+      (<span style="color: #91a0b3;">if</span> helm-ff-sort-expansions-p
+          (sort fnames
+                (<span style="color: #91a0b3;">lambda</span> (f1 f2) (or (file-directory-p f1)
+                                (not (file-directory-p f2)))))
+        fnames)))
+
+  (<span style="color: #91a0b3;">defun</span> <span style="color: #a9df90;">helm-ff-try-expand-fname-1</span> (parent children)
+    (<span style="color: #91a0b3;">if</span> children
+        (<span style="color: #91a0b3;">if</span> (equal children '(<span style="color: #ddbc91;">""</span>))
+            (and (file-directory-p parent) `(,(concat parent <span style="color: #ddbc91;">"/"</span>)))
+          (<span style="color: #91a0b3;">when</span> (file-directory-p parent)
+            (apply 'nconc
+                   (mapcar
+                    (<span style="color: #91a0b3;">lambda</span> (f)
+                      (or (helm-ff-try-expand-fname-1 f (cdr children))
+                          (<span style="color: #91a0b3;">unless</span> helm-ff-expand-valid-only-p
+                            (and (file-directory-p f)
+                                 `(,(concat f <span style="color: #ddbc91;">"/"</span> (mapconcat 'identity
+                                                             (cdr children)
+                                                             <span style="color: #ddbc91;">"/"</span>)))))))
+                    (directory-files parent t (concat <span style="color: #ddbc91;">"^"</span>
+                                                      (regexp-quote
+                                                       (car children))))))))
+      `(,(concat parent (and (file-directory-p parent) <span style="color: #ddbc91;">"/"</span>)))))
+
+  (<span style="color: #91a0b3;">defun</span> <span style="color: #a9df90;">qjp-helm-ff-try-expand-fname</span> (orig-func <span style="color: #ad8572;">&amp;rest</span> args)
+    (<span style="color: #91a0b3;">let*</span> ((candidate (car args))
+           (collection (helm-ff-try-expand-fname candidate)))
+      (<span style="color: #91a0b3;">if</span> (and (&gt; (length collection) 1)
+               (not (file-exists-p candidate)))
+          (with-helm-alive-p
+            (<span style="color: #91a0b3;">when</span> (helm-file-completion-source-p)
+              (helm-exit-and-execute-action
+               (<span style="color: #91a0b3;">lambda</span> (_)
+                 (helm-find-files-1
+                  (helm-comp-read <span style="color: #ddbc91;">"Expand Path to: "</span> collection))))))
+        (apply orig-func args))))
+
+  (advice-add 'helm-ff-kill-or-find-buffer-fname <span style="color: #9fbfdf;">:around</span> #'qjp-helm-ff-try-expand-fname))
+</pre>
+</div>
+
+<p>
+And here is how it looks:
+</p>
+<img src="http://i.imgur.com/lmOmPqA.gif"
+     alt="Helm support ZSH-like path expansions">
+
+<p>
+You can set <code>helm-ff-expand-valid-only-p</code> to <code>t</code> to have only valid paths in
+the completions. Another customization option is that you can set
+<code>helm-ff-sort-expansions-p</code> to <code>t</code> to make sure the valid paths will apear in
+the front of the completions.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline3" class="outline-2">
+<h2 id="orgheadline3"><span class="section-number-2">3</span> Disclaimer</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+I only tested with Emacs 24.5 on Arch Linux. :-)
+</p>
+</div>
+</div>
