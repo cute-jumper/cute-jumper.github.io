@@ -1,0 +1,488 @@
+---
+layout: post
+title: "Quick Summary: A Few Emacs Packages I've Written"
+excerpt: A quick summary of some Emacs package built by myself
+categories:
+  -  Emacs
+tags:
+  -  [Emacs, ace-jump-mode, avy, flyspell, helm, fcitx, bing, gmpl, firefox, bibtex, qml]
+---
+<p>
+I'll give a brief summary of the Emacs packages I've written so far. All of
+them are fairly simple:-). You can find them on <a href="http://melpa.org/">Melpa</a>, except for my fork of
+<a href="https://github.com/cute-jumper/matlab-mode">matlab-mode</a>.
+</p>
+
+<p>
+Here is the list of packages I've written so far:
+</p>
+<ul class="org-ul">
+<li><a href="https://github.com/cute-jumper/gscholar-bibtex">gscholar-bibtex</a></li>
+<li><a href="https://github.com/cute-jumper/ace-pinyin">ace-pinyin</a></li>
+<li><a href="https://github.com/cute-jumper/ace-flyspell">ace-flyspell</a></li>
+<li><a href="https://github.com/cute-jumper/ace-jump-helm-line">ace-jump-helm-line</a></li>
+<li><a href="https://github.com/cute-jumper/avy-zap">avy-zap</a></li>
+<li><a href="https://github.com/cute-jumper/fcitx.el">fcitx.el</a></li>
+<li><a href="https://github.com/cute-jumper/bing-dict.el">bing-dict.el</a></li>
+<li><a href="https://github.com/cute-jumper/company-qml">company-qml</a></li>
+<li><a href="https://github.com/cute-jumper/gmpl-mode">gmpl-mode</a></li>
+<li><a href="https://github.com/cute-jumper/emacs-firefox-controller">firefox-controller</a></li>
+</ul>
+
+<p>
+I'll give a brief and not-too-technical introduction to each package and share
+some personal feeling about the packages. For detailed usage for a package,
+please find the corresponding GitHub README file.
+</p>
+
+<div id="outline-container-orgheadline1" class="outline-2">
+<h2 id="orgheadline1"><span class="section-number-2">1</span> <a href="https://github.com/cute-jumper/gscholar-bibtex">gscholar-bibtex</a></h2>
+<div class="outline-text-2" id="text-1">
+<p>
+<i>Retrieve BibTeX entries from Google Scholar, ACM Digital Library, IEEE Xplore and DBLP</i>.
+</p>
+
+<p>
+Strangely, before I wrote <a href="https://github.com/cute-jumper/gscholar-bibtex">gscholar-bibtex</a>, there was no pure Elisp package
+that supported to download BibTeX entries from Google Scholar directly. Some
+Python or Perl scripts did exist, but I don't think we need the help from
+other scripting languages, which introduces unnecessary dependencies. And
+although <a href="https://github.com/pzorin/bibretrieve">bibretrieve</a> supports to download BibTeX entries from various sources,
+Google Scholar is not supported and personally speaking, I don't like the way
+that <a href="https://github.com/pzorin/bibretrieve">bibretrieve</a> does: it only fetches BibTeX entries. In some cases, it is
+hard to figure out whether the fetched BibTeX entry is what we want due to the
+lack of certain context. On the other hand, if we fetch too often from Google
+Scholar, our IP will be banned! I used to encounter such situations very often
+when I ran <a href="https://github.com/venthur/gscholar/">gscholar</a>, a Python script which does similar things.
+</p>
+
+<p>
+So what <code>gscholar-bibtex</code> does is: first it asks you for the keyword to
+search, then it displays the search results with the title and the excerpt.
+Users can select a result and preview the corresponding BibTeX entry. If that
+is what he/she wants, store the BibTeX entries to the database or some other
+file. The whole process is pretty much like what you would do in a web
+browser, but the workflow is simplified and it is implemented only in Emacs
+Lisp so is tightly integrated into Emacs.
+</p>
+
+<p>
+Later I added support for ACM Digital Library and IEEE Xplore, and thanks to
+<a href="https://github.com/liblit">Liblit</a>, we also got support for DBLP. The package right now is pretty stable.
+For future improvements, I would like to investigate <a href="https://github.com/tmalsburg/helm-bibtex">helm-bibtex</a> and <a href="https://github.com/jkitchin/org-ref">org-ref</a> a
+little bit to find the possibilities to integrate these packages.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline7" class="outline-2">
+<h2 id="orgheadline7"><span class="section-number-2">2</span> <a href="https://github.com/winterTTr/ace-jump-mode">ace-jump-mode</a> and <a href="https://github.com/abo-abo/avy">avy</a> extensions</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+<a href="https://github.com/abo-abo/avy">avy</a> is one of the most important Emacs extensions I have ever used. Jumping to
+anywhere in the screen using <a href="https://github.com/abo-abo/avy">avy</a> is super fast. However, at the time I started
+to write these packages, it was <a href="https://github.com/winterTTr/ace-jump-mode">ace-jump-mode</a> that provided such
+functionalities, and at first <a href="https://github.com/abo-abo">abo-abo</a> didn't plan to release =avy=(See <a href="https://github.com/abo-abo/ace-link/pull/10">here</a>.
+He changed his mind later, which is really a good decision!). You can notice
+that some of the packages I've written have <code>ace-</code> in their names. That's
+simply because originally I wrote these packages as an extension for
+<code>ace-jump-mode</code>, although most of them now supports <code>avy</code> or actually uses
+<code>avy</code>.
+</p>
+</div>
+
+<div id="outline-container-orgheadline2" class="outline-3">
+<h3 id="orgheadline2"><span class="section-number-3">2.1</span> <a href="https://github.com/cute-jumper/ace-pinyin">ace-pinyin</a></h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+<i>Jump to Chinese character by pinyin with <code>ace-jump-mode</code> or <code>avy</code></i>
+</p>
+
+<p>
+This package supports <code>ace-jump-mode</code> and <code>avy</code>. It's a real pain that <code>avy</code>
+only supports English and we can't use <code>avy</code> to jump to Chinese characters
+since I use <code>avy</code> heavily to navigate in files. Then I found
+<a href="https://github.com/redguardtoo/find-by-pinyin-dired">find-by-pinyin-dired</a> by <a href="https://github.com/redguardtoo/find-by-pinyin-dired">Chen Bin</a>, and inspired by this package, I wrote
+<code>ace-pinyin</code>. As long as <code>ace-pinyin-mode</code> is enabled, we can jump to either
+English or Chinese characters, using either <code>ace-jump-mode</code> or <code>avy</code>.
+</p>
+
+<p>
+For Japanese users, <a href="http://rubikitch.com/2015/04/18/ace-pinyin/">this article</a> provides a way to use <code>ace-pinyin</code> in
+Japanese, and thanks to <a href="https://github.com/erstern">erstern</a>, we got support for traditional Chinese
+characters!
+</p>
+
+<p>
+An outdated screenshot:
+</p>
+<img src="https://github.com/cute-jumper/ace-pinyin/blob/master/screencasts/ace-pinyin-jump-char.gif?raw=true" />
+</div>
+</div>
+
+
+<div id="outline-container-orgheadline3" class="outline-3">
+<h3 id="orgheadline3"><span class="section-number-3">2.2</span> <a href="https://github.com/cute-jumper/ace-flyspell">ace-flyspell</a></h3>
+<div class="outline-text-3" id="text-2-2">
+<p>
+<i>Jump to and correct spelling errors using ace-jump-mode and flyspell</i>
+</p>
+
+<p>
+This package is inspired by abo-abo's <a href="https://github.com/abo-abo/ace-link/">ace-link</a>. Once you have enabled
+<code>flyspell-mode</code>, you can jump to an error found by <code>flyspell</code> using
+<code>ace-jump-mode</code>. If you're using the command <code>ace-flyspell-dwim</code>, provided in
+this package, you can further fix the error and jump back to where you are in
+the beginning after you accept the fix. See this demo for the command
+=ace-flyspell-dwim=(it is a little out of date though):
+</p>
+<img src="https://github.com/cute-jumper/ace-flyspell/raw/master/screencasts/ace-flyspell-dwim.gif"/>
+
+<p>
+I use <code>ace-flyspell-dwim</code> very often. If <code>flyspell</code> finds a spelling error, I
+can quickly jump to the misspelled word, fix it and jump back. I feel the
+least interrupt during my writing using such a method.
+</p>
+
+<p>
+Unfortunately, right now this package is still using <code>ace-jump-mode</code>, and
+some features that I've planned haven't been added. For most of my use cases,
+it is good enough now, but I would like to use <code>avy</code> as the backend and add
+more features to it.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline4" class="outline-3">
+<h3 id="orgheadline4"><span class="section-number-3">2.3</span> <a href="https://github.com/cute-jumper/ace-jump-helm-line">ace-jump-helm-line</a></h3>
+<div class="outline-text-3" id="text-2-3">
+<p>
+<i>Ace-jump to a candidate in helm window</i>
+</p>
+
+<p>
+This is another simple, naive, yet useful package. <a href="http://www.emacswiki.org/emacs/anything.el">anything.el</a> has a similar
+function but <a href="https://github.com/emacs-helm/helm">helm</a> gets rid of it.(May not be true now, see <a href="https://github.com/emacs-helm/helm/issues/1257">here</a>). The
+original idea is proposed by hick(I don't know your link, sorry). To select a
+candidate in helm quickly, we can invoke <code>ace-jump-helm-line</code>, using the
+similar interface as <code>avy-goto-line</code>, to jump to a candidate. Another command
+is <code>ace-jump-helm-line-execute-action</code>, which will execute the persistent
+action after jumping to a candidate.
+</p>
+
+<p>
+Let's see what would happen:
+</p>
+<img src="https://github.com/cute-jumper/ace-jump-helm-line/raw/master/screencasts/avy-jump-style.gif" />
+</div>
+</div>
+
+<div id="outline-container-orgheadline5" class="outline-3">
+<h3 id="orgheadline5"><span class="section-number-3">2.4</span> <a href="https://github.com/cute-jumper/avy-zap">avy-zap</a></h3>
+<div class="outline-text-3" id="text-2-4">
+<p>
+<i>Zap to char using <code>avy</code></i>
+</p>
+
+<p>
+This package is basically a fork of the functionality of <a href="https://github.com/waymondo/ace-jump-zap">ace-jump-zap</a>, but
+using <code>avy</code> instead of <code>ace-jump-mode</code> as the jumping method. Yeah, finally a
+package named with <code>avy</code>!
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline6" class="outline-3">
+<h3 id="orgheadline6"><span class="section-number-3">2.5</span> A Little Comparison: <code>ace-jump-mode</code> vs <code>avy</code></h3>
+<div class="outline-text-3" id="text-2-5">
+<p>
+In terms of the extensibility, <code>avy</code> is much better than <code>ace-jump-mode</code>
+since it is fully synchronized. In <code>ace-jump-mode</code>, you have to rely on the
+hooks to run some custom functions, and there is a high probability that
+different packages may interfere and conflict with each other because the
+developers may not take care of the hooked functions used by other packages.
+Also, it is generally easier to do some complicated things and get the code
+right when using the fully synchronized way provided by <code>avy</code>.
+</p>
+
+<p>
+<code>ace-jump-mode</code> is not longer maintained. Using <code>avy</code> instead, and thanks to
+<a href="https://github.com/abo-abo/">abo-abo</a> for this awesome package(and his other packages such as <a href="https://github.com/abo-abo/hydra">hydra</a> and
+<a href="https://github.com/abo-abo/ace-link/">ace-link</a>)!
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgheadline10" class="outline-2">
+<h2 id="orgheadline10"><span class="section-number-2">3</span> For Chinese Users</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+In addition to <a href="https://github.com/cute-jumper/ace-pinyin">ace-pinyin</a>, I have also written some other packages, which
+might be useful especially for Chinese users.
+</p>
+</div>
+
+<div id="outline-container-orgheadline8" class="outline-3">
+<h3 id="orgheadline8"><span class="section-number-3">3.1</span> <a href="https://github.com/cute-jumper/fcitx.el">fcitx.el</a></h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+<i>Make fcitx better in Emacs</i>
+</p>
+
+<p>
+In Vim, <a href="https://github.com/vim-scripts/fcitx.vim">fcitx.vim</a> helps toggle <a href="https://github.com/fcitx">fcitx</a> in normal mode and insert mode, and in
+Emacs, we have <code>fcitx.el</code>, which adds the same functionalities to <code>Evil</code>, and
+besides, we have extra features for prefix keys and minibuffer input.
+</p>
+
+<p>
+User can set up the package either by <code>fcitx-default-setup</code> or
+<code>fcitx-aggressive-setup</code>. The difference between <code>fcitx-default-setup</code> and
+<code>fcitx-aggressive-setup</code> is that the latter completely disables <code>fcitx</code> in
+the minibuffer. For users who spend most of their time typing Chinese only in
+buffers, I suggests to use <code>fcitx-aggressive-setup</code>.
+</p>
+
+<p>
+As I'm not a hardcore Evil user, and most of the time I'm using Emacs key
+bindings, personally speaking, I like the prefix keys features most. It can
+disable <code>fcitx</code> after the user presses some certain prefix keys, such as
+<code>C-x</code> and <code>C-c</code>, so that the next single letter input, say <code>b</code>, will not
+block by <code>fcitx</code>.
+</p>
+
+<p>
+For OSX users, who don't have <code>fcitx</code> available, install
+<a href="https://github.com/CodeFalling/fcitx-remote-for-osx">fcitx-remote-for-osx</a>. It is compatible for both <code>fcitx.el</code> and
+<code>fcitx.vim</code> (modified version, see the project's README).
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline9" class="outline-3">
+<h3 id="orgheadline9"><span class="section-number-3">3.2</span> <a href="https://github.com/cute-jumper/bing-dict.el">bing-dict.el</a></h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+<i>Minimalists' Bing dictionary for Emacs</i>
+</p>
+
+<p>
+This package will ask the user for the word that he/she wants to find the
+translation from <a href="http://www.bing.com/dict/">Bing Dict</a>, and shows the one-line result in the echo area,
+and that's it, no bullshit and minimum of interference!
+</p>
+
+<p>
+Here is the screenshot:
+</p>
+<img src="https://github.com/cute-jumper/bing-dict.el/raw/master/screenshot.png" />
+
+<p>
+Why using Bing Dictionary? Because it does a fairly good job and its
+competitors really suck, for example, <a href="http://dict.youdao.com/">Youdao Dictionary</a>.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgheadline11" class="outline-2">
+<h2 id="orgheadline11"><span class="section-number-2">4</span> <a href="https://github.com/cute-jumper/company-qml">company-qml</a></h2>
+<div class="outline-text-2" id="text-4">
+<p>
+<i>Emacs company-mode backend for QML</i>
+</p>
+
+<p>
+The package name explains almost everything if you know what is <a href="https://github.com/company-mode/company-mode">company-mode</a>.
+In fact, <a href="https://github.com/auto-complete/auto-complete/">auto-complete</a> comes with a dictionary-based <code>QML</code> completion, while
+<code>company-mode</code> doesn't. However, you can simply use the <a href="https://github.com/auto-complete/auto-complete/blob/master/dict/qml-mode">dictionary</a> in
+<code>auto-complete</code> and add all the keywords in the dictionary to
+<code>company-keywords-alist</code> so that <code>company-keywords</code> backend is able to
+complete these keywords. However, I wanna achieve something a little more
+intelligent.
+</p>
+
+<p>
+I wrote a simple parser to parse the information provided in
+<code>plugins.qmltypes</code> files, which can be generated by <code>qmlplugindump</code>. After
+parsing type information, the company backend should be able to utilize the
+extracted type information. Several screenshots:
+</p>
+<p><img src="https://github.com/cute-jumper/company-qml/raw/master/screenshots/object.png"/></p>
+<p><img src="https://github.com/cute-jumper/company-qml/raw/master/screenshots/field.png"/></p>
+<p><img src="https://github.com/cute-jumper/company-qml/raw/master/screenshots/global.png"/></p>
+
+<p>
+Using <code>plugins.qmltypes</code> is very flexible. If you want completions for other
+libraries, say, if you are writing plugins for Plasma, you can feed the
+<code>plugin.qmltypes</code> file to the parser. As far as I know, QtCreator takes a
+similar approach.
+</p>
+
+<p>
+It is quite usable, but far from perfect for the time being. I would like to
+improve it in the near future. Several possible improvements that are on my
+top TODO list for this package are:
+</p>
+<ol class="org-ol">
+<li>Simplify the configuration process. For example, provide out-of-box
+completions for QML files using standard QML libraries. Extra settings are
+only needed when you need completions for third-party libraries.</li>
+<li>Better QML parser. For example, support nested object completions(current
+only one nested level) and <code>as</code> in <code>import</code> statement.</li>
+</ol>
+
+<p>
+Javascript support will be considered a little bit later.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline12" class="outline-2">
+<h2 id="orgheadline12"><span class="section-number-2">5</span> <a href="https://github.com/cute-jumper/gmpl-mode">gmpl-mode</a></h2>
+<div class="outline-text-2" id="text-5">
+<p>
+<i>Major mode for editing GMPL(MathProg) files</i>
+</p>
+
+<p>
+When I decided to use <a href="https://www.gnu.org/software/glpk/">glpk</a> for the project in my Linear Programming course, I
+was surprised to see that Emacs had no support for GNU MathProg(GMPL), which
+is the mathematical programming language used to describe models that can be
+solved by <code>glpk</code>. Before writing this major mode, I found <a href="https://github.com/dpo/ampl-mode">ampl-mode</a> on GitHub,
+but it has poor support for GMPL files, e.g., keywords not highlighted
+properly, some GMPL syntaxes are not supported, and its indentation function
+is too simple to indent my code correctly.
+</p>
+
+<p>
+So here comes <code>gmpl-mode</code>, and this is how it looks like using Emacs 24’s
+builtin theme <code>tsdh-dark</code>:
+</p>
+<img src="https://github.com/cute-jumper/gmpl-mode/raw/master/screenshot.png" />
+
+<p>
+If you only need to solve linear programs, you can use <kbd>C-c
+C-c</kbd> to call <code>gmpl-glpsol-solve-dwim</code>. The solutions and the
+sensitivity report will be shown in a new buffer. I also added some
+<code>font-lock</code> keywords to the solution buffer, so the key parts of the solutions
+can be recognized very quickly.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline13" class="outline-2">
+<h2 id="orgheadline13"><span class="section-number-2">6</span> <a href="https://github.com/cute-jumper/emacs-firefox-controller">emacs-firefox-controller</a></h2>
+<div class="outline-text-2" id="text-6">
+<p>
+<i>An improved Firefox controller for Emacs</i>
+</p>
+
+<p>
+Wow, control Firefox from Emacs, cool idea, huh?
+</p>
+
+<p>
+You have two different modes to choose: <code>firefox-controller-direct-mode</code> and
+<code>firefox-controller-remote-mode</code>. <code>firefox-controller-direct-mode</code>, as the
+names suggests, you can control the Firefox as if you are currently in
+Firefox, while your Emacs window keep the current focus of your window
+manager. All the keys you pressed will be processed by Firefox, except for
+some special keys. <code>firefox-controller-remote-mode</code>, on the other hands,
+provides some commands and binds these commands to a short key sequence. The
+keys pressed are processed by Emacs and Emacs remotely controls the Firefox.
+</p>
+
+<p>
+Confused? See the screenshots!
+</p>
+
+<p>
+Here is the screenshot for <code>firefox-controller-direct-mode</code>:
+</p>
+<img src="https://github.com/cute-jumper/emacs-firefox-controller/raw/master/screenshots/direct-mode.gif"/>
+
+<p>
+What on the earth am I doing here? First I invoke
+<code>firefox-controller-direct-mode</code>. After that I type
+<kbd>C-l</kbd> to go to the address bar, and use
+<kbd>M-g</kbd> to highlight my current location(which is the
+address bar of course). Then go to google.com, and use
+<kbd>M-g</kbd> again to confirm the current focused element
+in firefox is the search box. After I type and search "emacs", I use
+KeySnail's plugin <a href="https://github.com/mooz/keysnail/raw/master/plugins/hok.ks.js">hok</a> to jump to a link and open it.
+</p>
+
+<p>
+And what about <code>firefox-controller-remote-mode</code>? Here it is:
+</p>
+<img src="https://github.com/cute-jumper/emacs-firefox-controller/raw/master/screenshots/remote-mode.png"/>
+
+<p>
+Instead of using your Firefox key bindings, you can use the previous key
+bindings to control Firefox, like what we do when using a TV remote
+controller! This mode is good enough for just viewing the web page, but for
+tasks like editing text or jumping to a link, go to
+<code>firefox-controller-direct-mode</code> and use it with <a href="https://github.com/mooz/keysnail">KeySnail</a>.
+</p>
+
+<p>
+Note this is a reimplementation of <a href="https://github.com/RenWenshan/emacs-moz-controller">emacs-moz-controller</a> by <a href="https://github.com/RenWenshan/">RenWenshan</a>. It adds
+a lot of new features and provides a complete different user interface. Thanks
+to <a href="https://github.com/RenWenshan/">RenWenshan</a> for such an awesome idea!
+</p>
+
+<p>
+See also the discussions on <a href="https://www.reddit.com/r/emacs/comments/3w9zg9/an_improved_firefox_controller_for_emacs/">/r/emacs</a>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline14" class="outline-2">
+<h2 id="orgheadline14"><span class="section-number-2">7</span> <a href="https://github.com/cute-jumper/matlab-mode">matlab-mode</a></h2>
+<div class="outline-text-2" id="text-7">
+<p>
+This is a fork repo of <a href="https://github.com/pronobis/matlab-mode">pronobis's matlab-mode repo</a>.
+</p>
+
+<p>
+Thanks to probobis, who added some initial <code>company-mode</code> support for
+<code>matlab-mode</code>, but unfortunately, I can't really get <code>company-matlab-shell.el</code>
+to work. So I rewrote <code>company-matlab-shell.el</code> to fix many bugs, and added
+support to <code>company-matlab.el</code> so that it can complete the functions in the
+files under the current directory, which means you can get completions for
+your own functions. Cool.
+</p>
+
+<p>
+I don't create a pull request against the upstream repo since the code is kind
+of a mess(although it really works for me without any problems so far), and it
+contains some opinionated changes. Use my fork at your own risk:-).
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline15" class="outline-2">
+<h2 id="orgheadline15"><span class="section-number-2">8</span> My Thoughts on Elisp Development</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+I've written several Emacs packages and contributed a few lines of code to
+some popular Emacs packages. However, I'm not a hardcore Elisp developer, as I
+haven't really written anything complex enough in Elisp. All these packages
+are simple, but I personally find them really useful in my daily Emacs use.
+</p>
+
+<p>
+As an Emacs user, I would like to see more people coming into this community
+so that more awesome packages can be obtained! Elisp is not hard to learn if
+you have some scripting or functional language experience. I myself comes from
+a Python, Ruby and Scala background. So far, writing Elisp has been a fun
+journey.
+</p>
+
+<p>
+Welcome aboard, Elisp hackers!
+</p>
+</div>
+</div>
