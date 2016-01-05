@@ -34,7 +34,7 @@ author won't add this feature to helm(See <a href="https://github.com/emacs-helm
 <p>
 So in the previous example, using helm, you have to type some letters, select
 the candidate and expand to the selection. Since there are multiple levels of
-directories, you have to do this multiple times until you finnaly get to where
+directories, you have to do this multiple times until you finally get to where
 you want. This is so inefficient and way too teeeeeedious! I don't know why I
 have to do such stupid things if I've already known the structures of the
 directories very well(this is my computer anyway) and I know exactly where I
@@ -50,7 +50,8 @@ where you want to go or the path is not that deeply nested).
 <p>
 However, it is <i>Emacs</i>, we can customize it! I don't know much about the
 implementation of helm, but after about one hour's hack, I figured out a
-working patch for helm. This is what I add to my Emacs config file:
+working patch for helm. This is what I add to my Emacs config file(<b>EDIT</b>: You
+have to enable the lexical binding to make the following code work)
 </p>
 <div class="org-src-container">
 
@@ -119,7 +120,7 @@ And here is how it looks:
 <p>
 You can set <code>helm-ff-expand-valid-only-p</code> to <code>t</code> to have only valid paths in
 the completions. Another customization option is that you can set
-<code>helm-ff-sort-expansions-p</code> to <code>t</code> to make sure the valid paths will apear in
+<code>helm-ff-sort-expansions-p</code> to <code>t</code> to make sure the valid paths will appear in
 the front of the completions.
 </p>
 </div>
