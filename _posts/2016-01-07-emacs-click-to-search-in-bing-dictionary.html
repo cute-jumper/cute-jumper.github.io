@@ -1,0 +1,43 @@
+---
+layout: post
+title: "Emacs: Click to Search in Bing Dictionary"
+excerpt: "Click to Search using bing-dict.el"
+categories:
+  - Emacs
+tags:
+  - [emacs, bing]
+---
+
+<p>
+<a href="https://github.com/cute-jumper/bing-dict.el">bing-dict.el</a> provides a simple Emacs client for Bing Dictionary. I bind <code>C-c D</code>
+to <code>bing-dict-brief</code>, but sometimes I would like to use mouse to search the word
+by clicking. Here is a really simple code snippet that I've used for some time:
+</p>
+
+<div class="org-src-container">
+
+<pre class="src src-elisp">(<span style="color: #91a0b3;">require</span> '<span style="color: #ab85a3;">thingatpt</span>)
+(<span style="color: #91a0b3;">defun</span> <span style="color: #a9df90;">qjp-search-word-at-mouse</span> ()
+  <span style="color: #7c7565;">"Search the word at mouse using `</span><span style="color: #ab85a3;">bing-dict-brief</span><span style="color: #7c7565;">'."</span>
+  (interactive)
+  (<span style="color: #91a0b3;">save-excursion</span>
+    (mouse-set-point last-input-event)
+    (<span style="color: #91a0b3;">let</span> ((word (word-at-point)))
+      (<span style="color: #91a0b3;">when</span> word
+        (bing-dict-brief word)))))
+(global-set-key (kbd <span style="color: #ddbc91;">"&lt;C-mouse-1&gt;"</span>) 'qjp-search-word-at-mouse)
+(global-unset-key (kbd <span style="color: #ddbc91;">"&lt;C-down-mouse-1&gt;"</span>))
+</pre>
+</div>
+
+<p>
+Now you can move the cursor over the word that you want to search in Emacs and
+hold <code>Ctrl</code> and click the word. The search result in Bing Dictionary will be
+shown shortly in the echo area.
+</p>
+
+<p>
+Note that I intentionally use <code>save-excursion</code> in the function
+<code>qjp-search-word-at-mouse</code> to reserve the original cursor position so that
+searching a word by clicking will not change the cursor location.
+</p>
