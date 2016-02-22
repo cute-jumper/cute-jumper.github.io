@@ -1,0 +1,195 @@
+---
+layout: post
+title: My Simple Setup to to Avoid RSI in Emacs
+excerpt: Introduce some useful tips on how to avoid RSI in Emacs
+categories:
+  - Emacs
+tags:
+  - [Emacs, Linux, Keyboard]
+---
+
+<p>
+This is an introduction to my setup to avoid <b>Repeat Strain Injury</b> (RSI) in
+Emacs. It's very simple.
+</p>
+
+<p>
+Here is a list describing how I use Emacs:
+</p>
+<ol class="org-ol">
+<li>I'm familiar with and would like to use Emacs key bindings. That is, Evil is
+not the preferred way to navigate in Emacs.</li>
+<li>Never use <code>ESC</code>.</li>
+<li>I maintain my own <code>.emacs.d</code> but I also regularly check some popular
+<code>.emacs.d</code> repos on GitHub. For example, <a href="https://github.com/purcell/emacs.d">Steve Purcell's emacs.d</a>, <a href="https://github.com/bbatsov/prelude">Prelude</a>,
+and of course, the very popular <a href="https://github.com/syl20bnr/spacemacs">Spacemacs</a>.</li>
+</ol>
+
+<p>
+And I mainly use Emacs on Arch Linux and I have a US layout laptop PC keyboard.
+</p>
+
+<p>
+Only two steps are needed.
+</p>
+<div id="outline-container-orgheadline1" class="outline-2">
+<h2 id="orgheadline1"><span class="section-number-2">1</span> Step 1: Use Space As Ctrl</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+This can be achieved by different tools on differnt platforms. I use <a href="https://github.com/alols/xcape">xcape</a> in
+Arch Linux. Just install it from AUR, and use the following script to use
+<code>Space</code> as both <code>SPC</code> and <code>Ctrl</code>:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-sh"><span style="color: #706565;"># </span><span style="color: #857575;">Map an unused modifier's keysym to the spacebar's keycode and make it a</span>
+<span style="color: #706565;"># </span><span style="color: #857575;">control modifier. It needs to be an existing key so that emacs won't</span>
+<span style="color: #706565;"># </span><span style="color: #857575;">spazz out when you press it. Hyper_L is a good candidate.</span>
+<span style="color: #aaca86;">spare_modifier</span>=<span style="color: #ddbc91;">"Hyper_L"</span>
+xmodmap -e <span style="color: #ddbc91;">"keycode 65 = $spare_modifier"</span>
+xmodmap -e <span style="color: #ddbc91;">"remove mod4 = $spare_modifier"</span> <span style="color: #706565;"># </span><span style="color: #857575;">hyper_l is mod4 by default</span>
+xmodmap -e <span style="color: #ddbc91;">"add Control = $spare_modifier"</span>
+
+<span style="color: #706565;"># </span><span style="color: #857575;">Map space to an unused keycode (to keep it around for xcape to</span>
+<span style="color: #706565;"># </span><span style="color: #857575;">use).</span>
+xmodmap -e <span style="color: #ddbc91;">"keycode any = space"</span>
+
+<span style="color: #706565;"># </span><span style="color: #857575;">Finally use xcape to cause the space bar to generate a space when tapped.</span>
+xcape -e <span style="color: #ddbc91;">"$spare_modifier=space"</span>
+</pre>
+</div>
+
+<p>
+Now you can now hold down the <code>Space</code> key to use it as the <code>Ctrl</code> key. You can
+reach the <code>Space</code> key by your thumb without any problem. On a regular PC, <code>Alt</code>
+keys are beside the <code>Space</code> key, so you can easily press either <code>Ctrl</code> or
+<code>Meta</code>. To produce a real <b>space</b>, just press the <code>Space</code> key and release it,
+without holding it.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline2" class="outline-2">
+<h2 id="orgheadline2"><span class="section-number-2">2</span> Step 2: Swap Escape and Caps Lock</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+I <b>Never</b> use <code>Escape</code> in Emacs, then why on earth do I ever want to swap <code>Caps
+Lock</code> with <code>Escape</code>? Actually, <code>Escape</code> key in Emacs is kind of special. You
+don't need to hold down the <code>Escape</code> key while using the key bindings starting
+with <code>ESC</code>, which is very different from <code>Ctrl</code> and <code>Meta</code>. I don't know how
+<code>Escape</code> key event is generated in Emacs or in X11, but from a user point of
+view, it is quite like other non-modifier keys. You press it down and release
+it, one key is generated. This is really nice since we can then use it as the
+"leader" key for the Emacs just like the <code>Space</code> key in Spacemacs.
+</p>
+
+<p>
+So first, let's swap <code>Escape</code> and <code>Caps Lock</code> so we can easily reach <code>Escape</code> by
+our left pinky. I use <code>setxkbmap</code>:
+</p>
+<pre class="example">
+setxkbmap -option caps:swapescape
+</pre>
+
+<p>
+Then remap <code>ESC</code> to <code>C-c</code> since it is the standard prefix key reserved for
+users:
+</p>
+<div class="org-src-container">
+
+<pre class="src src-elisp">(define-key key-translation-map (kbd <span style="color: #ddbc91;">"ESC"</span>) (kbd <span style="color: #ddbc91;">"C-c"</span>))
+</pre>
+</div>
+
+<p>
+So why is this useful? If you like the way Spacemacs organizes its key bindings,
+you can replace its key bindings with <code>C-c</code> as the prefix instead of <code>Space</code>,
+since all the single letter key bindings starting with <code>C-c</code> are reserved for
+users. Now let's assume that you bind <code>C-c b b</code> to behave like <code>SPC b b</code>, which
+is <code>helm-mini</code> in the case of Spacemacs. You can press the key bindings in
+following ways(note <code>ESC</code> has been remapped to <code>C-c</code> and swapped with <code>Caps
+Lock</code> so you can easily press it by your left pinky):
+</p>
+<ol class="org-ol">
+<li><code>ESC</code>, <code>b</code>, <code>b</code>, just like <code>SPC</code>, <code>b</code>, <code>b</code>, one keystroke at a time.</li>
+<li>Holding down <code>ESC</code> and <code>b</code> at the same time and then release <code>ESC</code> and press
+<code>b</code>, just like how you would press <code>C-x b</code>.</li>
+<li>Holding down <code>ESC</code> and press <code>b</code>, <code>b</code>, just like how you would press <code>C-x
+   C-x</code>.</li>
+</ol>
+
+<p>
+The latter two are valid because <code>ESC</code> key event is only generated once, but I
+would just use the first one because in that case the pinky doesn't have to be
+in a stressed state by holding down some key. Just press it and release it. No
+extra effort needed. What's more, the <code>Escape</code> key, after swapped with <code>Caps
+Lock</code>, is almost as easy to be pressed as the <code>Space</code> key! And there is one
+addtional benifit: it is more robust since if you accidentally press your
+keyboard in the second or the third way, you can still generate the key sequence
+you want! You can now imagine you use <code>Escapemacs</code> because <code>Escape</code> is taking
+the role of <code>Space</code> in Spacemacs.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgheadline3" class="outline-2">
+<h2 id="orgheadline3"><span class="section-number-2">3</span> Addtional Step</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Sorry, I lied. Actually we need an additional step:-). Why? Because we use
+<code>Space</code> as both <code>Space</code> and <code>Ctrl</code>. We should carefully think about how to deal
+with key bindings that contain <code>Ctrl</code> and <code>Space</code>. Of course, you can use the
+physical <code>Ctrl</code> key in this case, then you don't need any addition step. For me,
+I rebind those commands to <code>C-c SPC</code>, and combined with other packages such as
+<a href="https://github.com/abo-abo/hydra">hydra</a> and <a href="https://github.com/magnars/expand-region.el">expand-region</a>.
+</p>
+<div class="org-src-container">
+
+<pre class="src src-elisp">(defhydra hydra-mark (<span style="color: #9fbfdf;">:body-pre</span> (call-interactively 'set-mark-command)
+                                <span style="color: #9fbfdf;">:exit</span> t)
+  <span style="color: #ddbc91;">"hydra for mark commands"</span>
+  (<span style="color: #ddbc91;">"SPC"</span> er/expand-region)
+  (<span style="color: #ddbc91;">"P"</span> er/mark-inside-pairs)
+  (<span style="color: #ddbc91;">"Q"</span> er/mark-inside-quotes)
+  (<span style="color: #ddbc91;">"p"</span> er/mark-outside-pairs)
+  (<span style="color: #ddbc91;">"q"</span> er/mark-outside-quotes)
+  (<span style="color: #ddbc91;">"d"</span> er/mark-defun)
+  (<span style="color: #ddbc91;">"c"</span> er/mark-comment)
+  (<span style="color: #ddbc91;">"."</span> er/mark-text-sentence)
+  (<span style="color: #ddbc91;">"h"</span> er/mark-text-paragraph)
+  (<span style="color: #ddbc91;">"w"</span> er/mark-word)
+  (<span style="color: #ddbc91;">"u"</span> er/mark-url)
+  (<span style="color: #ddbc91;">"m"</span> er/mark-email)
+  (<span style="color: #ddbc91;">"s"</span> er/mark-symbol)
+  (<span style="color: #ddbc91;">"j"</span> (funcall 'set-mark-command t) <span style="color: #9fbfdf;">:exit</span> nil))
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgheadline4" class="outline-2">
+<h2 id="orgheadline4"><span class="section-number-2">4</span> Some Other Tip: <code>key-chord-mode</code> and <code>hydra</code></h2>
+<div class="outline-text-2" id="text-4">
+<p>
+<code>key-chord-mode</code> is great. You can press two key strokes quickly to invoke a
+command. I have defined many key chords, quite similar as what you can find
+on other people's blog on <code>key-chord-mode</code>, such as <code>xf</code> to open a file, <code>xs</code>
+to save a buffer and <code>bb</code> to switch buffers. I bind <code>jj</code> to change to a
+simple VI mode which is defined by <code>hydra</code>, and because <code>jj</code> is so easy to
+press I also use it to invoke <a href="https://github.com/cute-jumper/ace-jump-helm-line">ace-jump-helm-line</a> in helm so that my fingers
+don't have to leave the home row when quickly selecting a helm candidate.
+</p>
+
+<p>
+I know someone would always recommend me to use Evil to avoid RSI in Emacs.
+Evil is awesome, but I thought for me, it is too heavy-weight. I used to use
+Evil very often, and I used Emacs key bindings in insert mode. However, I
+found that I stayed in insert mode too long because of my Emacs muscle
+memory: all the <code>C-a</code>, <code>C-e</code>, <code>M-f</code>, <code>M-b</code> kind of commands to navigate the
+buffers and of course I also heavily use <code>avy</code>. Although sometimes I do enjoy
+using the VI's <code>hjkl</code> and other key bindings, I thought I don't really need
+the power of Evil. So after <code>hydra</code> comes out, I used it to define a very
+tiny and simple VI mode for myself, and that's just enough for me.
+</p>
+</div>
+</div>
