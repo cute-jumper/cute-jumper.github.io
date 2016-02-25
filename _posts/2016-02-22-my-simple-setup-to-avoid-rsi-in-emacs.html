@@ -45,20 +45,20 @@ xcape's README) to use <code>Space</code> as both <code>SPC</code> and <code>Ctr
 </p>
 <div class="org-src-container">
 
-<pre class="src src-sh"><span style="color: #706565;"># </span><span style="color: #857575;">Map an unused modifier's keysym to the spacebar's keycode and make it a</span>
-<span style="color: #706565;"># </span><span style="color: #857575;">control modifier. It needs to be an existing key so that emacs won't</span>
-<span style="color: #706565;"># </span><span style="color: #857575;">spazz out when you press it. Hyper_L is a good candidate.</span>
-<span style="color: #aaca86;">spare_modifier</span>=<span style="color: #ddbc91;">"Hyper_L"</span>
-xmodmap -e <span style="color: #ddbc91;">"keycode 65 = $spare_modifier"</span>
-xmodmap -e <span style="color: #ddbc91;">"remove mod4 = $spare_modifier"</span> <span style="color: #706565;"># </span><span style="color: #857575;">hyper_l is mod4 by default</span>
-xmodmap -e <span style="color: #ddbc91;">"add Control = $spare_modifier"</span>
+<pre class="src src-sh"><span style="color: #656565;"># </span><span style="color: #757575;">Map an unused modifier's keysym to the spacebar's keycode and make it a</span>
+<span style="color: #656565;"># </span><span style="color: #757575;">control modifier. It needs to be an existing key so that emacs won't</span>
+<span style="color: #656565;"># </span><span style="color: #757575;">spazz out when you press it. Hyper_L is a good candidate.</span>
+<span style="color: #baba36;">spare_modifier</span>=<span style="color: #bdbc61;">"Hyper_L"</span>
+xmodmap -e <span style="color: #bdbc61;">"keycode 65 = $spare_modifier"</span>
+xmodmap -e <span style="color: #bdbc61;">"remove mod4 = $spare_modifier"</span> <span style="color: #656565;"># </span><span style="color: #757575;">hyper_l is mod4 by default</span>
+xmodmap -e <span style="color: #bdbc61;">"add Control = $spare_modifier"</span>
 
-<span style="color: #706565;"># </span><span style="color: #857575;">Map space to an unused keycode (to keep it around for xcape to</span>
-<span style="color: #706565;"># </span><span style="color: #857575;">use).</span>
-xmodmap -e <span style="color: #ddbc91;">"keycode any = space"</span>
+<span style="color: #656565;"># </span><span style="color: #757575;">Map space to an unused keycode (to keep it around for xcape to</span>
+<span style="color: #656565;"># </span><span style="color: #757575;">use).</span>
+xmodmap -e <span style="color: #bdbc61;">"keycode any = space"</span>
 
-<span style="color: #706565;"># </span><span style="color: #857575;">Finally use xcape to cause the space bar to generate a space when tapped.</span>
-xcape -e <span style="color: #ddbc91;">"$spare_modifier=space"</span>
+<span style="color: #656565;"># </span><span style="color: #757575;">Finally use xcape to cause the space bar to generate a space when tapped.</span>
+xcape -e <span style="color: #bdbc61;">"$spare_modifier=space"</span>
 </pre>
 </div>
 
@@ -100,7 +100,7 @@ users:
 </p>
 <div class="org-src-container">
 
-<pre class="src src-elisp">(define-key key-translation-map (kbd <span style="color: #ddbc91;">"ESC"</span>) (kbd <span style="color: #ddbc91;">"C-c"</span>))
+<pre class="src src-elisp">(define-key key-translation-map (kbd <span style="color: #bdbc61;">"ESC"</span>) (kbd <span style="color: #bdbc61;">"C-c"</span>))
 </pre>
 </div>
 
@@ -148,23 +148,23 @@ I rebind those commands to <code>C-c SPC</code>, and combined with other package
 </p>
 <div class="org-src-container">
 
-<pre class="src src-elisp">(defhydra hydra-mark (<span style="color: #9fbfdf;">:body-pre</span> (call-interactively 'set-mark-command)
-                                <span style="color: #9fbfdf;">:exit</span> t)
-  <span style="color: #ddbc91;">"hydra for mark commands"</span>
-  (<span style="color: #ddbc91;">"SPC"</span> er/expand-region)
-  (<span style="color: #ddbc91;">"P"</span> er/mark-inside-pairs)
-  (<span style="color: #ddbc91;">"Q"</span> er/mark-inside-quotes)
-  (<span style="color: #ddbc91;">"p"</span> er/mark-outside-pairs)
-  (<span style="color: #ddbc91;">"q"</span> er/mark-outside-quotes)
-  (<span style="color: #ddbc91;">"d"</span> er/mark-defun)
-  (<span style="color: #ddbc91;">"c"</span> er/mark-comment)
-  (<span style="color: #ddbc91;">"."</span> er/mark-text-sentence)
-  (<span style="color: #ddbc91;">"h"</span> er/mark-text-paragraph)
-  (<span style="color: #ddbc91;">"w"</span> er/mark-word)
-  (<span style="color: #ddbc91;">"u"</span> er/mark-url)
-  (<span style="color: #ddbc91;">"m"</span> er/mark-email)
-  (<span style="color: #ddbc91;">"s"</span> er/mark-symbol)
-  (<span style="color: #ddbc91;">"j"</span> (funcall 'set-mark-command t) <span style="color: #9fbfdf;">:exit</span> nil))
+<pre class="src src-elisp">(defhydra hydra-mark (<span style="color: #528fd1;">:body-pre</span> (call-interactively 'set-mark-command)
+                                <span style="color: #528fd1;">:exit</span> t)
+  <span style="color: #bdbc61;">"hydra for mark commands"</span>
+  (<span style="color: #bdbc61;">"SPC"</span> er/expand-region)
+  (<span style="color: #bdbc61;">"P"</span> er/mark-inside-pairs)
+  (<span style="color: #bdbc61;">"Q"</span> er/mark-inside-quotes)
+  (<span style="color: #bdbc61;">"p"</span> er/mark-outside-pairs)
+  (<span style="color: #bdbc61;">"q"</span> er/mark-outside-quotes)
+  (<span style="color: #bdbc61;">"d"</span> er/mark-defun)
+  (<span style="color: #bdbc61;">"c"</span> er/mark-comment)
+  (<span style="color: #bdbc61;">"."</span> er/mark-text-sentence)
+  (<span style="color: #bdbc61;">"h"</span> er/mark-text-paragraph)
+  (<span style="color: #bdbc61;">"w"</span> er/mark-word)
+  (<span style="color: #bdbc61;">"u"</span> er/mark-url)
+  (<span style="color: #bdbc61;">"m"</span> er/mark-email)
+  (<span style="color: #bdbc61;">"s"</span> er/mark-symbol)
+  (<span style="color: #bdbc61;">"j"</span> (funcall 'set-mark-command t) <span style="color: #528fd1;">:exit</span> nil))
 </pre>
 </div>
 </div>
@@ -203,6 +203,12 @@ tiny and simple VI mode for myself, and that's just enough for me.
 <div class="outline-text-2" id="text-5">
 <p>
 Just don't rebind <code>Caps Lock</code> to <code>Ctrl</code>. It harms your pinky.
+</p>
+
+<p>
+[ <b>UPDATE 2016-02-25</b> ] Note: This article describes only part of my settings
+because I think my own full key remapping settings might be too opinionated(and
+thus not that helpful). <a href="https://github.com/cute-jumper/.emacs.d#important-key-remapping">Here</a> describes a little more.
 </p>
 </div>
 </div>
