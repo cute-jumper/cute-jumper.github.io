@@ -35,8 +35,8 @@ keyboards.
 <p>
 Only two steps are needed!
 </p>
-<div id="outline-container-orgheadline1" class="outline-2">
-<h2 id="orgheadline1"><span class="section-number-2">1</span> Step 1: Use Space As Ctrl</h2>
+<div id="outline-container-orgaedc50c" class="outline-2">
+<h2 id="orgaedc50c"><span class="section-number-2">1</span> Step 1: Use Space As Ctrl</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 This can be achieved by different tools on differnt platforms. I use <a href="https://github.com/alols/xcape">xcape</a> in
@@ -44,21 +44,20 @@ Arch Linux. Just install it from AUR, and use the following script(found in
 xcape's README) to use <code>Space</code> as both <code>SPC</code> and <code>Ctrl</code>:
 </p>
 <div class="org-src-container">
+<pre class="src src-sh"><span style="color: #6c6c6c; font-style: italic;"># </span><span style="color: #6c6c6c; font-style: italic;">Map an unused modifier's keysym to the spacebar's keycode and make it a</span>
+<span style="color: #6c6c6c; font-style: italic;"># </span><span style="color: #6c6c6c; font-style: italic;">control modifier. It needs to be an existing key so that emacs won't</span>
+<span style="color: #6c6c6c; font-style: italic;"># </span><span style="color: #6c6c6c; font-style: italic;">spazz out when you press it. Hyper_L is a good candidate.</span>
+<span style="color: #ff8700;">spare_modifier</span>=<span style="color: #ff4ea3;">"Hyper_L"</span>
+xmodmap -e <span style="color: #ff4ea3;">"keycode 65 = $spare_modifier"</span>
+xmodmap -e <span style="color: #ff4ea3;">"remove mod4 = $spare_modifier"</span> <span style="color: #6c6c6c; font-style: italic;"># </span><span style="color: #6c6c6c; font-style: italic;">hyper_l is mod4 by default</span>
+xmodmap -e <span style="color: #ff4ea3;">"add Control = $spare_modifier"</span>
 
-<pre class="src src-sh"><span style="color: #656565;"># </span><span style="color: #757575;">Map an unused modifier's keysym to the spacebar's keycode and make it a</span>
-<span style="color: #656565;"># </span><span style="color: #757575;">control modifier. It needs to be an existing key so that emacs won't</span>
-<span style="color: #656565;"># </span><span style="color: #757575;">spazz out when you press it. Hyper_L is a good candidate.</span>
-<span style="color: #baba36;">spare_modifier</span>=<span style="color: #bdbc61;">"Hyper_L"</span>
-xmodmap -e <span style="color: #bdbc61;">"keycode 65 = $spare_modifier"</span>
-xmodmap -e <span style="color: #bdbc61;">"remove mod4 = $spare_modifier"</span> <span style="color: #656565;"># </span><span style="color: #757575;">hyper_l is mod4 by default</span>
-xmodmap -e <span style="color: #bdbc61;">"add Control = $spare_modifier"</span>
+<span style="color: #6c6c6c; font-style: italic;"># </span><span style="color: #6c6c6c; font-style: italic;">Map space to an unused keycode (to keep it around for xcape to</span>
+<span style="color: #6c6c6c; font-style: italic;"># </span><span style="color: #6c6c6c; font-style: italic;">use).</span>
+xmodmap -e <span style="color: #ff4ea3;">"keycode any = space"</span>
 
-<span style="color: #656565;"># </span><span style="color: #757575;">Map space to an unused keycode (to keep it around for xcape to</span>
-<span style="color: #656565;"># </span><span style="color: #757575;">use).</span>
-xmodmap -e <span style="color: #bdbc61;">"keycode any = space"</span>
-
-<span style="color: #656565;"># </span><span style="color: #757575;">Finally use xcape to cause the space bar to generate a space when tapped.</span>
-xcape -e <span style="color: #bdbc61;">"$spare_modifier=space"</span>
+<span style="color: #6c6c6c; font-style: italic;"># </span><span style="color: #6c6c6c; font-style: italic;">Finally use xcape to cause the space bar to generate a space when tapped.</span>
+xcape -e <span style="color: #ff4ea3;">"$spare_modifier=space"</span>
 </pre>
 </div>
 
@@ -72,8 +71,8 @@ key and release it, without holding it.
 </div>
 </div>
 
-<div id="outline-container-orgheadline2" class="outline-2">
-<h2 id="orgheadline2"><span class="section-number-2">2</span> Step 2: Swap Escape and Caps Lock</h2>
+<div id="outline-container-org6ed32a6" class="outline-2">
+<h2 id="org6ed32a6"><span class="section-number-2">2</span> Step 2: Swap Escape and Caps Lock</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 I <b>Never</b> use <code>Escape</code> in Emacs, then why on earth do I ever want to swap <code>Caps
@@ -99,8 +98,7 @@ Then remap <code>ESC</code> to <code>C-c</code> since it is the standard prefix 
 users:
 </p>
 <div class="org-src-container">
-
-<pre class="src src-elisp">(define-key key-translation-map (kbd <span style="color: #bdbc61;">"ESC"</span>) (kbd <span style="color: #bdbc61;">"C-c"</span>))
+<pre class="src src-elisp">(define-key key-translation-map (kbd <span style="color: #ff4ea3;">"ESC"</span>) (kbd <span style="color: #ff4ea3;">"C-c"</span>))
 </pre>
 </div>
 
@@ -135,8 +133,8 @@ the role of <code>Space</code> in Spacemacs.
 </div>
 </div>
 
-<div id="outline-container-orgheadline3" class="outline-2">
-<h2 id="orgheadline3"><span class="section-number-2">3</span> Addtional Step</h2>
+<div id="outline-container-orgd871911" class="outline-2">
+<h2 id="orgd871911"><span class="section-number-2">3</span> Addtional Step</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 Sorry, I lied. Actually we need an additional step:-). Why? Because we use
@@ -147,31 +145,30 @@ I rebind those commands to <code>C-c SPC</code>, and combined with other package
 <a href="https://github.com/abo-abo/hydra">hydra</a> and <a href="https://github.com/magnars/expand-region.el">expand-region</a>.
 </p>
 <div class="org-src-container">
-
-<pre class="src src-elisp">(defhydra hydra-mark (<span style="color: #528fd1;">:body-pre</span> (call-interactively 'set-mark-command)
-                                <span style="color: #528fd1;">:exit</span> t)
-  <span style="color: #bdbc61;">"hydra for mark commands"</span>
-  (<span style="color: #bdbc61;">"SPC"</span> er/expand-region)
-  (<span style="color: #bdbc61;">"P"</span> er/mark-inside-pairs)
-  (<span style="color: #bdbc61;">"Q"</span> er/mark-inside-quotes)
-  (<span style="color: #bdbc61;">"p"</span> er/mark-outside-pairs)
-  (<span style="color: #bdbc61;">"q"</span> er/mark-outside-quotes)
-  (<span style="color: #bdbc61;">"d"</span> er/mark-defun)
-  (<span style="color: #bdbc61;">"c"</span> er/mark-comment)
-  (<span style="color: #bdbc61;">"."</span> er/mark-text-sentence)
-  (<span style="color: #bdbc61;">"h"</span> er/mark-text-paragraph)
-  (<span style="color: #bdbc61;">"w"</span> er/mark-word)
-  (<span style="color: #bdbc61;">"u"</span> er/mark-url)
-  (<span style="color: #bdbc61;">"m"</span> er/mark-email)
-  (<span style="color: #bdbc61;">"s"</span> er/mark-symbol)
-  (<span style="color: #bdbc61;">"j"</span> (funcall 'set-mark-command t) <span style="color: #528fd1;">:exit</span> nil))
+<pre class="src src-elisp">(<span style="color: #a1db00;">defhydra</span> hydra-mark (<span style="color: #d18aff;">:body-pre</span> (call-interactively 'set-mark-command)
+                                <span style="color: #d18aff;">:exit</span> t)
+  <span style="color: #ff4ea3;">"hydra for mark commands"</span>
+  (<span style="color: #ff4ea3;">"SPC"</span> er/expand-region)
+  (<span style="color: #ff4ea3;">"P"</span> er/mark-inside-pairs)
+  (<span style="color: #ff4ea3;">"Q"</span> er/mark-inside-quotes)
+  (<span style="color: #ff4ea3;">"p"</span> er/mark-outside-pairs)
+  (<span style="color: #ff4ea3;">"q"</span> er/mark-outside-quotes)
+  (<span style="color: #ff4ea3;">"d"</span> er/mark-defun)
+  (<span style="color: #ff4ea3;">"c"</span> er/mark-comment)
+  (<span style="color: #ff4ea3;">"."</span> er/mark-text-sentence)
+  (<span style="color: #ff4ea3;">"h"</span> er/mark-text-paragraph)
+  (<span style="color: #ff4ea3;">"w"</span> er/mark-word)
+  (<span style="color: #ff4ea3;">"u"</span> er/mark-url)
+  (<span style="color: #ff4ea3;">"m"</span> er/mark-email)
+  (<span style="color: #ff4ea3;">"s"</span> er/mark-symbol)
+  (<span style="color: #ff4ea3;">"j"</span> (funcall 'set-mark-command t) <span style="color: #d18aff;">:exit</span> nil))
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgheadline4" class="outline-2">
-<h2 id="orgheadline4"><span class="section-number-2">4</span> Some Other Tip: <code>key-chord-mode</code>, <code>avy</code> and <code>hydra</code></h2>
+<div id="outline-container-org512237e" class="outline-2">
+<h2 id="org512237e"><span class="section-number-2">4</span> Some Other Tip: <code>key-chord-mode</code>, <code>avy</code> and <code>hydra</code></h2>
 <div class="outline-text-2" id="text-4">
 <p>
 <code>key-chord-mode</code> is great. You can press two key strokes quickly to invoke a
@@ -198,8 +195,8 @@ tiny and simple VI mode for myself, and that's just enough for me.
 </div>
 </div>
 
-<div id="outline-container-orgheadline5" class="outline-2">
-<h2 id="orgheadline5"><span class="section-number-2">5</span> Final Words</h2>
+<div id="outline-container-org62ae722" class="outline-2">
+<h2 id="org62ae722"><span class="section-number-2">5</span> Final Words</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 Just don't rebind <code>Caps Lock</code> to <code>Ctrl</code>. It harms your pinky.

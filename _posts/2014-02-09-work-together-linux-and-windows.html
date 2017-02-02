@@ -8,8 +8,8 @@ tags:
   -  [Linux, Windows, Software, Samba, inotifywait, Synergy, Arch Linux, Ubuntu]
 ---
 
-<div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> Introduction</h2>
+<div id="outline-container-org5add0d4" class="outline-2">
+<h2 id="org5add0d4"><span class="section-number-2">1</span> Introduction</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 Currently I have <b>three</b> laptops. They have Arch Linux, Windows 8.1 and Ubuntu
@@ -30,11 +30,12 @@ problem here is how to make these machines cooperate with each other.
 </p>
 </div>
 </div>
-<div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> Share files over Local Network</h2>
+
+<div id="outline-container-org1b5e232" class="outline-2">
+<h2 id="org1b5e232"><span class="section-number-2">2</span> Share files over Local Network</h2>
 <div class="outline-text-2" id="text-2">
-</div><div id="outline-container-sec-2-1" class="outline-3">
-<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Server</h3>
+</div><div id="outline-container-orgb047024" class="outline-3">
+<h3 id="orgb047024"><span class="section-number-3">2.1</span> Server</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 The first thing I want to set up is to access files on another machine over the
@@ -48,8 +49,7 @@ First install <code>samba</code> and <code>smbclient</code>. Copy the example co
 below:
 </p>
 <div class="org-src-container">
-
-<pre class="src src-sh">name resolve order = lmhosts bcast host wins
+<pre class="src src-sh">name resolve <span style="color: #ff8700;">order</span> = lmhosts bcast host wins
 </pre>
 </div>
 <p>
@@ -71,7 +71,6 @@ using <code>systemctl start smbd nmbd</code> and make them enable by default usi
 Next we need to grant users' access to the Samba drives. Using
 </p>
 <div class="org-src-container">
-
 <pre class="src src-sh">smbpasswd -a qjp
 </pre>
 </div>
@@ -81,16 +80,14 @@ drives as user <code>qjp</code> now. The server settings are all done.
 </p>
 </div>
 </div>
-
-<div id="outline-container-sec-2-2" class="outline-3">
-<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Client</h3>
+<div id="outline-container-org73b2e09" class="outline-3">
+<h3 id="org73b2e09"><span class="section-number-3">2.2</span> Client</h3>
 <div class="outline-text-3" id="text-2-2">
 <p>
 Essentially there are no apparent settings required in client side. To see some
 useful information of a Samba server:
 </p>
 <div class="org-src-container">
-
 <pre class="src src-sh">smbclient -L hostname -U username
 </pre>
 </div>
@@ -100,9 +97,8 @@ Now we manually mount the remote drive to a local mountpoint, using one of the
 sharenames you see in the output of previous command:
 </p>
 <div class="org-src-container">
-
 <pre class="src src-sh">sudo mount -t cifs //hostname/sharename /path/to/mountpoint -o
-user=username,password=password,workgroup=WORKGROUP,uid=localusername,gid=localgroupname,ip=serverip
+<span style="color: #ff8700;">user</span>=username,<span style="color: #ff8700;">password</span>=password,<span style="color: #ff8700;">workgroup</span>=WORKGROUP,<span style="color: #ff8700;">uid</span>=localusername,<span style="color: #ff8700;">gid</span>=localgroupname,<span style="color: #ff8700;">ip</span>=serverip
 </pre>
 </div>
 
@@ -113,9 +109,8 @@ not <code>root</code>.
 </p>
 </div>
 </div>
-
-<div id="outline-container-sec-2-3" class="outline-3">
-<h3 id="sec-2-3"><span class="section-number-3">2.3</span> A Use Case</h3>
+<div id="outline-container-org0d3e572" class="outline-3">
+<h3 id="org0d3e572"><span class="section-number-3">2.3</span> A Use Case</h3>
 <div class="outline-text-3" id="text-2-3">
 <p>
 Now let us see a use case of how to work effectively by using Linux and Windows
@@ -161,9 +156,8 @@ You could find some examples <a href="https://github.com/rvoicilas/inotify-tools
 simple:
 </p>
 <div class="org-src-container">
-
-<pre class="src src-sh">inotifywait -m -e close_write example.pdf | while read foo; do cp example.pdf
-/path/to/mountpoint/Documents/example.pdf; done
+<pre class="src src-sh">inotifywait -m -e close_write example.pdf | <span style="color: #a1db00;">while </span><span style="color: #d18aff;">read</span> foo; <span style="color: #a1db00;">do</span> cp example.pdf
+/path/to/mountpoint/Documents/example.pdf; <span style="color: #a1db00;">done</span>
 </pre>
 </div>
 
@@ -175,8 +169,9 @@ the new pdf file. This process is very fast.
 </div>
 </div>
 </div>
-<div id="outline-container-sec-3" class="outline-2">
-<h2 id="sec-3"><span class="section-number-2">3</span> Share keyboard and Mouse Between Laptops</h2>
+
+<div id="outline-container-org548e2ec" class="outline-2">
+<h2 id="org548e2ec"><span class="section-number-2">3</span> Share keyboard and Mouse Between Laptops</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 In order to switch between different laptops seamlessly, I need to control the
@@ -222,8 +217,9 @@ really awesome.
 </p>
 </div>
 </div>
-<div id="outline-container-sec-4" class="outline-2">
-<h2 id="sec-4"><span class="section-number-2">4</span> Conclusion</h2>
+
+<div id="outline-container-orgf974d66" class="outline-2">
+<h2 id="orgf974d66"><span class="section-number-2">4</span> Conclusion</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 OK. These are all my settings to make use of multiple laptops together. I could

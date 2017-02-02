@@ -15,18 +15,17 @@ by clicking. Here is a really simple code snippet that I've used for some time:
 </p>
 
 <div class="org-src-container">
-
-<pre class="src src-elisp">(<span style="color: #91a0b3;">require</span> '<span style="color: #ab85a3;">thingatpt</span>)
-(<span style="color: #91a0b3;">defun</span> <span style="color: #a9df90;">qjp-search-word-at-mouse</span> ()
-  <span style="color: #7c7565;">"Search the word at mouse using `</span><span style="color: #ab85a3;">bing-dict-brief</span><span style="color: #7c7565;">'."</span>
-  (interactive)
-  (<span style="color: #91a0b3;">save-excursion</span>
+<pre class="src src-elisp">(<span style="color: #a1db00;">require</span> '<span style="color: #5fafd7;">thingatpt</span>)
+(<span style="color: #a1db00;">defun</span> <span style="color: #ffd700;">qjp-search-word-at-mouse</span> ()
+  <span style="color: #ff4b4b;">"Search the word at mouse using `</span><span style="color: #5fafd7;">bing-dict-brief</span><span style="color: #ff4b4b;">'."</span>
+  (<span style="color: #a1db00;">interactive</span>)
+  (<span style="color: #a1db00;">save-excursion</span>
     (mouse-set-point last-input-event)
-    (<span style="color: #91a0b3;">let</span> ((word (word-at-point)))
-      (<span style="color: #91a0b3;">when</span> word
+    (<span style="color: #a1db00;">let</span> ((word (word-at-point)))
+      (<span style="color: #a1db00;">when</span> word
         (bing-dict-brief word)))))
-(global-set-key (kbd <span style="color: #ddbc91;">"&lt;C-mouse-1&gt;"</span>) 'qjp-search-word-at-mouse)
-(global-unset-key (kbd <span style="color: #ddbc91;">"&lt;C-down-mouse-1&gt;"</span>))
+(global-set-key (kbd <span style="color: #ff4ea3;">"&lt;C-mouse-1&gt;"</span>) 'qjp-search-word-at-mouse)
+(global-unset-key (kbd <span style="color: #ff4ea3;">"&lt;C-down-mouse-1&gt;"</span>))
 </pre>
 </div>
 

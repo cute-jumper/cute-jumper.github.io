@@ -12,8 +12,8 @@ This post is roughly based on the <a href="http://hadoop.apache.org/docs/r2.5.0/
 Node Cluster</a>.
 </p>
 
-<div id="outline-container-sec-1" class="outline-2">
-<h2 id="sec-1"><span class="section-number-2">1</span> Preparation</h2>
+<div id="outline-container-org8e832c6" class="outline-2">
+<h2 id="org8e832c6"><span class="section-number-2">1</span> Preparation</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 Before installing Hadoop, we should make sure that <code>ssh</code>, <code>rsync</code> and <code>OpenJDK</code>
@@ -24,7 +24,6 @@ However, there is a minor problem during recent <code>java-common</code>'s upgra
 configured. Run
 </p>
 <div class="org-src-container">
-
 <pre class="src src-sh">archlinux-java status
 </pre>
 </div>
@@ -32,7 +31,6 @@ configured. Run
 to see whether the default jvm has already been chosen. If not, Run
 </p>
 <div class="org-src-container">
-
 <pre class="src src-sh">archlinux-java fix
 </pre>
 </div>
@@ -44,7 +42,6 @@ to fix it.
 We also want a dedicated user and group for Hadoop. This is quite easy:
 </p>
 <div class="org-src-container">
-
 <pre class="src src-sh">sudo groupadd hadoop
 sudo useradd -m -g hadoop hduser
 </pre>
@@ -63,11 +60,11 @@ find useful documentation about that.
 </div>
 </div>
 
-<div id="outline-container-sec-2" class="outline-2">
-<h2 id="sec-2"><span class="section-number-2">2</span> Install Hadoop</h2>
+<div id="outline-container-orgcd452d9" class="outline-2">
+<h2 id="orgcd452d9"><span class="section-number-2">2</span> Install Hadoop</h2>
 <div class="outline-text-2" id="text-2">
-</div><div id="outline-container-sec-2-1" class="outline-3">
-<h3 id="sec-2-1"><span class="section-number-3">2.1</span> Download the Distribution</h3>
+</div><div id="outline-container-org78779cf" class="outline-3">
+<h3 id="org78779cf"><span class="section-number-3">2.1</span> Download the Distribution</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 First download Hadoop 2.5.0 distribution from <a href="http://www.apache.org/dyn/closer.cgi/hadoop/common/">Apache Download Mirrors</a>. Extract
@@ -75,15 +72,14 @@ it to <code>hadoop-2.5.0</code> directory and move it to a directory you like. I
 to <code>/usr/local/</code>, and ran the following command(may need root privilege):
 </p>
 <div class="org-src-container">
-
 <pre class="src src-sh">ln -s /usr/local/hadoop-2.5.0 /usr/local/hadoop
 chown -R hduser:hadoop /usr/local/hadoop-2.5.0
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-sec-2-2" class="outline-3">
-<h3 id="sec-2-2"><span class="section-number-3">2.2</span> Change Environment Variables</h3>
+<div id="outline-container-orgcc56361" class="outline-3">
+<h3 id="orgcc56361"><span class="section-number-3">2.2</span> Change Environment Variables</h3>
 <div class="outline-text-3" id="text-2-2">
 <p>
 The most important environment variable is <code>JAVA_HOME</code> in
@@ -96,25 +92,23 @@ The following change is not mandatory, but it may simplify our typing&#x2026;I A
 these lines to the initial script of my favorite shell(as user <code>hduser</code>):
 </p>
 <div class="org-src-container">
-
-<pre class="src src-sh"><span style="color: #DFAF8F;">HADOOP_PREFIX</span>=/usr/local/hadoop
-<span style="color: #DFAF8F;">PATH</span>=$<span style="color: #DFAF8F;">PATH</span>:${<span style="color: #DFAF8F;">HADOOP_PREFIX</span>}/bin:${<span style="color: #DFAF8F;">HADOOP_PREFIX</span>}/sbin
+<pre class="src src-sh"><span style="color: #ff8700;">HADOOP_PREFIX</span>=/usr/local/hadoop
+<span style="color: #ff8700;">PATH</span>=$<span style="color: #ff8700;">PATH</span>:${<span style="color: #ff8700;">HADOOP_PREFIX</span>}/bin:${<span style="color: #ff8700;">HADOOP_PREFIX</span>}/sbin
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-sec-2-3" class="outline-3">
-<h3 id="sec-2-3"><span class="section-number-3">2.3</span> Standalone Mode</h3>
+<div id="outline-container-org6b36810" class="outline-3">
+<h3 id="org6b36810"><span class="section-number-3">2.3</span> Standalone Mode</h3>
 <div class="outline-text-3" id="text-2-3">
 <p>
 Now Hadoop should work in a non-distributed mode. The following commands are
 based on <a href="http://hadoop.apache.org/docs/r2.5.0/hadoop-project-dist/hadoop-common/SingleCluster.html">Apache Hadoop Documentation</a>.
 </p>
 <div class="org-src-container">
-
 <pre class="src src-sh">mkdir input
-cp ${<span style="color: #DFAF8F;">HADOOP_PREFIX</span>}/etc/hadoop/*.xml input
-hadoop jar ${<span style="color: #DFAF8F;">HADOOP_PREFIX</span>}/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.5.0.jar grep input output <span style="color: #CC9393;">'dfs[a-z.]+'</span>
+cp ${<span style="color: #ff8700;">HADOOP_PREFIX</span>}/etc/hadoop/*.xml input
+hadoop jar ${<span style="color: #ff8700;">HADOOP_PREFIX</span>}/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.5.0.jar grep input output <span style="color: #ff4ea3;">'dfs[a-z.]+'</span>
 cat output/*
 </pre>
 </div>
@@ -123,38 +117,36 @@ The following sections are only essential for the pseudo-distributed operation.
 </p>
 </div>
 </div>
-<div id="outline-container-sec-2-4" class="outline-3">
-<h3 id="sec-2-4"><span class="section-number-3">2.4</span> Setup Paraphraseless SSH</h3>
+<div id="outline-container-orgbe36ae8" class="outline-3">
+<h3 id="orgbe36ae8"><span class="section-number-3">2.4</span> Setup Paraphraseless SSH</h3>
 <div class="outline-text-3" id="text-2-4">
 <p>
 Now ssh onto localhost as <code>hduser</code>, then
 </p>
 <div class="org-src-container">
-
-<pre class="src src-sh">ssh-keygen -P <span style="color: #CC9393;">''</span>
-cat $<span style="color: #DFAF8F;">HOME</span>/.ssh/id_rsa.pub &gt;&gt; $<span style="color: #DFAF8F;">HOME</span>/.ssh/authorized_keys
+<pre class="src src-sh">ssh-keygen -P <span style="color: #ff4ea3;">''</span>
+cat $<span style="color: #ff8700;">HOME</span>/.ssh/id_rsa.pub &gt;&gt; $<span style="color: #ff8700;">HOME</span>/.ssh/authorized_keys
 </pre>
 </div>
 </div>
 </div>
-<div id="outline-container-sec-2-5" class="outline-3">
-<h3 id="sec-2-5"><span class="section-number-3">2.5</span> Configuration for Pseudo-Distributed Mode</h3>
+<div id="outline-container-orgd0ba6b3" class="outline-3">
+<h3 id="orgd0ba6b3"><span class="section-number-3">2.5</span> Configuration for Pseudo-Distributed Mode</h3>
 <div class="outline-text-3" id="text-2-5">
 <p>
 I added the following lines to <code>${HADOOP_PREFIX}/etc/hadoop/core-site.xml</code>:
 </p>
 <div class="org-src-container">
-
-<pre class="src src-xml">&lt;<span style="color: #93E0E3;">configuration</span>&gt;
-  &lt;<span style="color: #93E0E3;">property</span>&gt;
-    &lt;<span style="color: #93E0E3;">name</span>&gt;fs.defaultFS&lt;/<span style="color: #93E0E3;">name</span>&gt;
-    &lt;<span style="color: #93E0E3;">value</span>&gt;hdfs://localhost:9000&lt;/<span style="color: #93E0E3;">value</span>&gt;
-  &lt;/<span style="color: #93E0E3;">property</span>&gt;
-  &lt;<span style="color: #93E0E3;">property</span>&gt;
-    &lt;<span style="color: #93E0E3;">name</span>&gt;hadoop.tmp.dir&lt;/<span style="color: #93E0E3;">name</span>&gt;
-    &lt;<span style="color: #93E0E3;">value</span>&gt;/home/hduser/hdfs&lt;/<span style="color: #93E0E3;">value</span>&gt;
-  &lt;/<span style="color: #93E0E3;">property</span>&gt;
-&lt;/<span style="color: #93E0E3;">configuration</span>&gt;
+<pre class="src src-xml">&lt;<span style="color: #ffd700;">configuration</span>&gt;
+  &lt;<span style="color: #ffd700;">property</span>&gt;
+    &lt;<span style="color: #ffd700;">name</span>&gt;fs.defaultFS&lt;/<span style="color: #ffd700;">name</span>&gt;
+    &lt;<span style="color: #ffd700;">value</span>&gt;hdfs://localhost:9000&lt;/<span style="color: #ffd700;">value</span>&gt;
+  &lt;/<span style="color: #ffd700;">property</span>&gt;
+  &lt;<span style="color: #ffd700;">property</span>&gt;
+    &lt;<span style="color: #ffd700;">name</span>&gt;hadoop.tmp.dir&lt;/<span style="color: #ffd700;">name</span>&gt;
+    &lt;<span style="color: #ffd700;">value</span>&gt;/home/hduser/hdfs&lt;/<span style="color: #ffd700;">value</span>&gt;
+  &lt;/<span style="color: #ffd700;">property</span>&gt;
+&lt;/<span style="color: #ffd700;">configuration</span>&gt;
 </pre>
 </div>
 
@@ -164,13 +156,12 @@ because the contents under <code>/tmp</code> would be removed on every reboot, w
 I want. Then add these lines to <code>${HADOOP_PREFIX}/etc/hadoop/hdfs-site.xml</code>:
 </p>
 <div class="org-src-container">
-
-<pre class="src src-xml">&lt;<span style="color: #93E0E3;">configuration</span>&gt;
-  &lt;<span style="color: #93E0E3;">property</span>&gt;
-    &lt;<span style="color: #93E0E3;">name</span>&gt;dfs.replication&lt;/<span style="color: #93E0E3;">name</span>&gt;
-    &lt;<span style="color: #93E0E3;">value</span>&gt;1&lt;/<span style="color: #93E0E3;">value</span>&gt;
-  &lt;/<span style="color: #93E0E3;">property</span>&gt;
-&lt;/<span style="color: #93E0E3;">configuration</span>&gt;
+<pre class="src src-xml">&lt;<span style="color: #ffd700;">configuration</span>&gt;
+  &lt;<span style="color: #ffd700;">property</span>&gt;
+    &lt;<span style="color: #ffd700;">name</span>&gt;dfs.replication&lt;/<span style="color: #ffd700;">name</span>&gt;
+    &lt;<span style="color: #ffd700;">value</span>&gt;1&lt;/<span style="color: #ffd700;">value</span>&gt;
+  &lt;/<span style="color: #ffd700;">property</span>&gt;
+&lt;/<span style="color: #ffd700;">configuration</span>&gt;
 </pre>
 </div>
 
@@ -178,13 +169,12 @@ I want. Then add these lines to <code>${HADOOP_PREFIX}/etc/hadoop/hdfs-site.xml<
 Then the following commands from the <a href="http://hadoop.apache.org/docs/r2.5.0/hadoop-project-dist/hadoop-common/SingleCluster.html">Apache Hadoop Documentation</a> should work.
 </p>
 <div class="org-src-container">
-
 <pre class="src src-sh">hdfs namenode -format
 start-dfs.sh
 hdfs dfs -mkdir /user
 hdfs dfs -mkdir /user/hduser
-hdfs dfs -put ${<span style="color: #DFAF8F;">HADOOP_PREFIX</span>}/etc/hadoop input
-hadoop jar ${<span style="color: #DFAF8F;">HADOOP_PREFIX</span>}/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.5.0.jar grep input output <span style="color: #CC9393;">'dfs[a-z.]+'</span>
+hdfs dfs -put ${<span style="color: #ff8700;">HADOOP_PREFIX</span>}/etc/hadoop input
+hadoop jar ${<span style="color: #ff8700;">HADOOP_PREFIX</span>}/share/hadoop/mapreduce/hadoop-mapreduce-examples-2.5.0.jar grep input output <span style="color: #ff4ea3;">'dfs[a-z.]+'</span>
 hdfs dfs -get output output
 cat output/*
 stop-dfs.sh
