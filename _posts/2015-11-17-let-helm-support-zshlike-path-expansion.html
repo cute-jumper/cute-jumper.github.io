@@ -36,9 +36,20 @@ the candidate and expand to the selection. Since there are multiple levels of
 directories, you have to do this multiple times until you finally get to where
 you want. This is so inefficient and way too teeeeeedious! I don't know why I
 have to do such stupid things if I've already known the structures of the
-directories very well(this is my computer anyway) and I know exactly where I
-wanna go(Yeah, the current behavior of helm is useful when you are not sure
+directories very well (this is my computer anyway) and I know exactly where I
+wanna go (Yeah, the current behavior of helm is useful when you are not sure
 where you want to go or the path is not that deeply nested).
+</p>
+
+<p>
+For example, I want to open the <code>haskell-mode.el</code> source code file I
+downloaded from MELPA. I know it must be inside <code>~/.emacs.d/</code>, then <code>elpa</code>,
+then <code>haskell-mode-whatever</code>, and then <code>haskell-mode.el</code>. To do that in normal
+helm, I need to type <code>~/</code>, some letters and movements to select <code>.emacs.d</code>,
+enter the directory, repeat the previous procedure until I finally get to
+<code>haskell-mode.el</code>. Instead of doing all the tedious <i>type-move-select</i> thing,
+I would like to type <code>~/.e/e/h/h</code>, then <code>tab</code>, select the result and hit
+<code>enter</code>. Done. Much fewer keystrokes required.
 </p>
 </div>
 </div>
@@ -57,6 +68,18 @@ have to enable the lexical binding to make the following code work)
   <span style="color: #6c6c6c; font-style: italic;">;; </span><span style="color: #6c6c6c; font-style: italic;">Let helm support zsh-like path expansion.</span>
   (<span style="color: #a1db00;">defvar</span> <span style="color: #ff8700;">helm-ff-expand-valid-only-p</span> t)
   (<span style="color: #a1db00;">defvar</span> <span style="color: #ff8700;">helm-ff-sort-expansions-p</span> t)
+  (<span style="color: #a1db00;">defvar</span> <span style="color: #ff8700;">helm-ff-ignore-case-p</span> t)
+  (<span style="color: #a1db00;">defun</span> <span style="color: #ffd700;">helm-ff--generate-case-ignore-pattern</span> (pattern)
+    (<span style="color: #a1db00;">let</span> (head (ci-pattern <span style="color: #ff4ea3;">""</span>))
+      (<span style="color: #a1db00;">dotimes</span> (i (length pattern) ci-pattern)
+        (<span style="color: #a1db00;">setq</span> head (aref pattern i))
+        (<span style="color: #a1db00;">cond</span>
+         ((<span style="color: #a1db00;">and</span> (&lt;= head ?z) (&gt;= head ?a))
+          (<span style="color: #a1db00;">setq</span> ci-pattern (format <span style="color: #ff4ea3;">"%s[%c%c]"</span> ci-pattern (upcase head) head)))
+         ((<span style="color: #a1db00;">and</span> (&lt;= head ?Z) (&gt;= head ?A))
+          (<span style="color: #a1db00;">setq</span> ci-pattern (format <span style="color: #ff4ea3;">"%s[%c%c]"</span> ci-pattern head (downcase head))))
+         (<span style="color: #d18aff;">:else</span>
+          (<span style="color: #a1db00;">setq</span> ci-pattern (format <span style="color: #ff4ea3;">"%s%c"</span> ci-pattern head)))))))
   (<span style="color: #a1db00;">defun</span> <span style="color: #ffd700;">helm-ff-try-expand-fname</span> (candidate)
     (<span style="color: #a1db00;">let</span> ((dirparts (split-string candidate <span style="color: #ff4ea3;">"/"</span>))
           valid-dir
@@ -87,9 +110,12 @@ have to enable the lexical binding to make the following code work)
                                  `(,(concat f <span style="color: #ff4ea3;">"/"</span> (mapconcat 'identity
                                                              (cdr children)
                                                              <span style="color: #ff4ea3;">"/"</span>)))))))
-                    (directory-files parent t (concat <span style="color: #ff4ea3;">"^"</span>
-                                                      (regexp-quote
-                                                       (car children))))))))
+                    (directory-files parent t
+                                     (concat <span style="color: #ff4ea3;">"^"</span>
+                                             (<span style="color: #a1db00;">if</span> helm-ff-ignore-case-p
+                                                 (helm-ff--generate-case-ignore-pattern
+                                                  (car children))
+                                               (car children))))))))
       `(,(concat parent (<span style="color: #a1db00;">and</span> (file-directory-p parent) <span style="color: #ff4ea3;">"/"</span>)))))
 
   (<span style="color: #a1db00;">defun</span> <span style="color: #ffd700;">qjp-helm-ff-try-expand-fname</span> (orig-func <span style="color: #00d7af;">&amp;rest</span> args)
